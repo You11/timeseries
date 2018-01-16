@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "206127785271",
+    "firebase_url": "https://timeseries-1d0a0.firebaseio.com",
+    "project_id": "timeseries-1d0a0",
+    "storage_bucket": "timeseries-1d0a0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:206127785271:android:54f3f3b7c4af9ecb",
+        "android_client_info": {
+          "package_name": "ru.you11.timeseries"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "206127785271-8v13jtg0e8agrg8tjrktlgs5fbolq4ar.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2gLbkEGsPDniQglzJfOZk8tQTWh9P5jQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
