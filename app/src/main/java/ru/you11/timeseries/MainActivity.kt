@@ -9,7 +9,6 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 
@@ -34,6 +33,17 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Failed to logged in!", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menu?.clear()
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null) {
+            menuInflater.inflate(R.menu.menu_main, menu)
+        } else {
+            menuInflater.inflate(R.menu.menu_main_logged_in, menu)
+        }
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -66,16 +76,5 @@ class MainActivity : AppCompatActivity() {
         }
 
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        menu?.clear()
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user == null) {
-            menuInflater.inflate(R.menu.menu_main, menu)
-        } else {
-            menuInflater.inflate(R.menu.menu_main_logged_in, menu)
-        }
-        return true
     }
 }
