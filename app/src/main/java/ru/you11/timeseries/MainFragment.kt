@@ -23,10 +23,19 @@ class MainFragment: Fragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        add_time_series_button.setOnClickListener {
+            val addFragment = AddTimeSeriesFragment()
+            activity.fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, addFragment)
+                    .addToBackStack(null)
+                    .commit()
+        }
+
         //recycler view from fragment
         time_series_rw.layoutManager = LinearLayoutManager(activity.applicationContext)
-        val timeSeries = ArrayList<TimeSeries>()
+
         //test data
+        val timeSeries = ArrayList<TimeSeries>()
         timeSeries.add(TimeSeries("у", null, null, null, null))
         timeSeries.add(TimeSeries("gavgav", null, null, null, null))
         time_series_rw.adapter = TimeSeriesRecyclerViewAdapter(timeSeries)
