@@ -5,9 +5,13 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.TextView
+import android.widget.Toast
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.fragment_main.view.*
 import kotlinx.android.synthetic.main.time_series_card.view.*
@@ -23,6 +27,8 @@ class MainFragment: Fragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         add_time_series_button.setOnClickListener {
             val addFragment = AddTimeSeriesFragment()
             activity.fragmentManager.beginTransaction()
@@ -36,30 +42,51 @@ class MainFragment: Fragment() {
 
         //test data
         val timeSeries = ArrayList<TimeSeries>()
-        timeSeries.add(TimeSeries("у", null, null, null, null))
-        timeSeries.add(TimeSeries("gavgav", null, null, null, null))
-        time_series_rw.adapter = TimeSeriesRecyclerViewAdapter(timeSeries)
+        val db = FirebaseFirestore.getInstance()
+        db.collection("time_series")
+                .get()
+                .addOnCompleteListener {
+                    it.result.forEach {
+                        val element = TimeSeries(it["name"].toString(),
+                                null,
+                                null,
+                                null,
+                                null)
+                        element.uid = it.id
+                        timeSeries.add(element)
+                    }
 
-        super.onViewCreated(view, savedInstanceState)
+                    time_series_rw.adapter = TimeSeriesRecyclerViewAdapter(timeSeries, this)
+                }
     }
-}
 
 
-class TimeSeriesRecyclerViewAdapter(val items: ArrayList<TimeSeries>): RecyclerView.Adapter<TimeSeriesRecyclerViewAdapter.ViewHolder>() {
+    class TimeSeriesRecyclerViewAdapter(private val items: ArrayList<TimeSeries>, val fragment: Fragment): RecyclerView.Adapter<TimeSeriesRecyclerViewAdapter.ViewHolder>() {
 
-    class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        fun bind(timeSeries: TimeSeries) {
-            itemView.time_series_name.text = timeSeries.name
+        class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+            fun bind(timeSeries: TimeSeries) {
+                itemView.time_series_name.text = timeSeries.name
+            }
         }
-    }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.time_series_card, parent, false))
-    }
+        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+            return ViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.time_series_card, parent, false))
+        }
 
-    override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-        holder?.bind(items[position])
-    }
+        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+            holder?.bind(items[position])
+            holder?.itemView?.setOnClickListener {
+                val newFragment = ViewTimeSeriesFragment()
+                val bundle = Bundle()
+                bundle.putString("uid", items[position].uid)
+                newFragment.arguments = bundle
+                fragment.activity.fragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, newFragment)
+                        .addToBackStack(null)
+                        .commit()
+            }
+        }
 
-    override fun getItemCount(): Int = items.size
+        override fun getItemCount(): Int = items.size
+    }
 }
