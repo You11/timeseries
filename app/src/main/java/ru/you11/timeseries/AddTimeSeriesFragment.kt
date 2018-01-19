@@ -2,6 +2,7 @@ package ru.you11.timeseries
 
 import android.app.Fragment
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,14 +35,51 @@ class AddTimeSeriesFragment: Fragment() {
 
         save_ts_button.setOnClickListener {
 
+            //check if name is blank
+            if (add_ts_name_value.text.isNullOrBlank()) {
+                Toast.makeText(activity.applicationContext, "Please enter name of time series", Toast.LENGTH_SHORT).show()
+                add_ts_name_value.requestFocus()
+                return@setOnClickListener
+            }
+
             val dataPoints = HashMap<String, List<Double>>()
             for (i in 0 until add_ts_points_layout.childCount) {
                 val secLayout = add_ts_points_layout.getChildAt(i) as LinearLayout
-                val firstValue = secLayout.getChildAt(0) as EditText
-                val secondValue = secLayout.getChildAt(1) as EditText
+                val dataValueView = secLayout.getChildAt(0) as EditText
+                val timeValueView = secLayout.getChildAt(1) as EditText
+
+                //check if they are blank
+                if (dataValueView.text.isNullOrBlank()) {
+                    Toast.makeText(activity.applicationContext, "Please enter data value of time series", Toast.LENGTH_SHORT).show()
+                    dataValueView.requestFocus()
+                    return@setOnClickListener
+                }
+                if (timeValueView.text.isNullOrBlank()) {
+                    Toast.makeText(activity.applicationContext, "Please enter time value of time series", Toast.LENGTH_SHORT).show()
+                    timeValueView.requestFocus()
+                    return@setOnClickListener
+                }
+
+                //check if input is number
                 val arr = ArrayList<Double>()
-                arr.add(firstValue.text.toString().toDouble())
-                arr.add(secondValue.text.toString().toDouble())
+                val pattern = "^-?\\d*\\.?\\d+\$"
+                val dataValue = dataValueView.text.toString()
+                if (Regex(pattern).matches(dataValue)) {
+                    arr.add(dataValue.toDouble())
+                } else {
+                    Toast.makeText(activity.applicationContext, "Please enter valid input", Toast.LENGTH_SHORT).show()
+                    dataValueView.requestFocus()
+                    return@setOnClickListener
+                }
+                val timeValue = timeValueView.text.toString()
+                if (Regex(pattern).matches(timeValue)) {
+                    arr.add(timeValue.toDouble())
+                } else {
+                    Toast.makeText(activity.applicationContext, "Please enter valid input", Toast.LENGTH_SHORT).show()
+                    timeValueView.requestFocus()
+                    return@setOnClickListener
+                }
+
                 dataPoints[i.toString()] = arr
             }
 
@@ -56,11 +94,7 @@ class AddTimeSeriesFragment: Fragment() {
                 ts.timeDescription = it
             }
 
-            //should hide keyboard, but it doesn't, maybe it's emulator fault
-//            if (activity.currentFocus != null) {
-//                val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-//                imm.hideSoftInputFromInputMethod(activity.currentFocus.windowToken, 0)
-//            }
+            //TODO: hide keyboard
 
             //send data to firestore
             val db = FirebaseFirestore.getInstance()
@@ -83,6 +117,8 @@ class AddTimeSeriesFragment: Fragment() {
         newLayout.orientation = LinearLayout.HORIZONTAL
         val value = EditText(context)
         val time = EditText(context)
+        value.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
+        time.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
         newLayout.addView(value)
         newLayout.addView(time)
         layout.addView(newLayout)
