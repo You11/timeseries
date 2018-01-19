@@ -21,8 +21,8 @@ class ViewTimeSeriesFragment: Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val db = FirebaseFirestore.getInstance()
-        val data = db.collection("time_series").whereEqualTo("uid", arguments.getString("uid")).get().result.documents[0]
+//        val db = FirebaseFirestore.getInstance()
+//        val data = db.collection("time_series").whereEqualTo("uid", arguments.getString("uid")).get().result.documents[0]
 //        val timeSeries = TimeSeries(data["name"].toString(),
 //                data["creationDate"].toString(),
 //                data["changeDate"].toString(),

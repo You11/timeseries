@@ -5,16 +5,13 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_main.*
-import kotlinx.android.synthetic.main.fragment_main.view.*
 import kotlinx.android.synthetic.main.time_series_card.view.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -48,8 +45,7 @@ class MainFragment: Fragment() {
                 .addOnCompleteListener {
                     it.result.forEach {
                         val element = TimeSeries(it["name"].toString(),
-                                null,
-                                null,
+                                it["creationDate"].toString(),
                                 null,
                                 null)
                         element.uid = it.id
@@ -58,10 +54,13 @@ class MainFragment: Fragment() {
 
                     time_series_rw.adapter = TimeSeriesRecyclerViewAdapter(timeSeries, this)
                 }
+                .addOnFailureListener {
+                    Toast.makeText(activity.applicationContext, "Failed to load!", Toast.LENGTH_SHORT).show()
+                }
     }
 
 
-    class TimeSeriesRecyclerViewAdapter(private val items: ArrayList<TimeSeries>, val fragment: Fragment): RecyclerView.Adapter<TimeSeriesRecyclerViewAdapter.ViewHolder>() {
+    class TimeSeriesRecyclerViewAdapter(private val items: ArrayList<TimeSeries>, private val fragment: Fragment): RecyclerView.Adapter<TimeSeriesRecyclerViewAdapter.ViewHolder>() {
 
         class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             fun bind(timeSeries: TimeSeries) {
