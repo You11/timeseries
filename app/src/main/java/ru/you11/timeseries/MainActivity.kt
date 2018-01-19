@@ -18,12 +18,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        fragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, MainFragment())
-                .addToBackStack(null)
-                .commit()
+        setView()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -34,6 +29,9 @@ class MainActivity : AppCompatActivity() {
 
             if (resultCode == Activity.RESULT_OK) {
                 Toast.makeText(this, "Logged in", Toast.LENGTH_SHORT).show()
+                //to exit current fragment
+                onBackPressed()
+                setView()
             } else {
                 Toast.makeText(this, "Failed to logged in!", Toast.LENGTH_SHORT).show()
             }
@@ -68,6 +66,9 @@ class MainActivity : AppCompatActivity() {
             R.id.menu_main_logout -> {
                 AuthUI.getInstance().signOut(this).addOnCompleteListener {
                     Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
+                    //to exit current fragment
+                    onBackPressed()
+                    setView()
                     invalidateOptionsMenu()
                 }
 
@@ -81,5 +82,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun setView() {
+        setContentView(R.layout.activity_main)
+
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, MainFragment())
+                .addToBackStack(null)
+                .commit()
     }
 }

@@ -4,6 +4,7 @@ import android.app.Fragment
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,23 +41,27 @@ class MainFragment: Fragment() {
         //test data
         val timeSeries = ArrayList<TimeSeries>()
         val db = FirebaseFirestore.getInstance()
-        db.collection("time_series")
-                .get()
-                .addOnCompleteListener {
-                    it.result.forEach {
-                        val element = TimeSeries(it["name"].toString(),
-                                it["creationDate"].toString(),
-                                null,
-                                null)
-                        element.uid = it.id
-                        timeSeries.add(element)
-                    }
+        val task = db.collection("time_series").get()
 
-                    time_series_rw.adapter = TimeSeriesRecyclerViewAdapter(timeSeries, this)
-                }
-                .addOnFailureListener {
-                    Toast.makeText(activity.applicationContext, "Failed to load!", Toast.LENGTH_SHORT).show()
-                }
+        task.addOnCompleteListener {
+            if (!it.isSuccessful) {
+                Toast.makeText(activity.applicationContext, it.exception?.localizedMessage, Toast.LENGTH_SHORT).show()
+                return@addOnCompleteListener
+            }
+
+            it.result.forEach {
+                val element = TimeSeries(it["name"].toString(),
+                        it["creationDate"].toString(),
+                        null,
+                        null)
+                element.uid = it.id
+                timeSeries.add(element)
+            }
+
+            time_series_rw.adapter = TimeSeriesRecyclerViewAdapter(timeSeries, this)
+        }.addOnFailureListener {
+            Toast.makeText(activity.applicationContext, it.localizedMessage, Toast.LENGTH_SHORT).show()
+        }
     }
 
 
