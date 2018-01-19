@@ -59,6 +59,8 @@ class MainFragment: Fragment() {
             }
 
             time_series_rw.adapter = TimeSeriesRecyclerViewAdapter(timeSeries, this)
+            main_screen_loading_icon.hide()
+            time_series_rw.visibility = RecyclerView.VISIBLE
         }.addOnFailureListener {
             Toast.makeText(activity.applicationContext, it.localizedMessage, Toast.LENGTH_SHORT).show()
         }

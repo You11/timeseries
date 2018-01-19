@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:id="@+id/fragment_main_layout" >
+    android:id="@+id/fragment_main_layout">
 
     <Button
         android:layout_width="match_parent"
@@ -11,8 +12,17 @@
         android:id="@+id/add_time_series_button"
         android:text="@string/add_button_text" />
 
+    <com.wang.avi.AVLoadingIndicatorView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:id="@+id/main_screen_loading_icon"
+        app:indicatorColor="#1976D2"
+        app:indicatorName="BallSpinFadeLoaderIndicator" />
+
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/time_series_rw" />
+        android:id="@+id/time_series_rw"
+        android:visibility="gone"/>
 </LinearLayout>
