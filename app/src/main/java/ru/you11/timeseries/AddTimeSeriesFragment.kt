@@ -6,6 +6,7 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -118,9 +119,17 @@ class AddTimeSeriesFragment: Fragment() {
         val value = EditText(context)
         val time = EditText(context)
         value.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
+        value.hint = "data value"
         time.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
+        time.hint = "time value"
+        val deleteButton = Button(context)
+        deleteButton.text = "Delete"
+        deleteButton.setOnClickListener {
+            layout.removeView(newLayout)
+        }
         newLayout.addView(value)
         newLayout.addView(time)
+        newLayout.addView(deleteButton)
         layout.addView(newLayout)
     }
 }

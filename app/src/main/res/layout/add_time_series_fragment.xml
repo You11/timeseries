@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="5dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -15,7 +16,8 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/add_ts_name_value"/>
+            android:id="@+id/add_ts_name_value"
+            android:hint="required"/>
     </LinearLayout>
 
     <TextView
@@ -49,7 +51,8 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/add_ts_data_description_value"/>
+            android:id="@+id/add_ts_data_description_value"
+            android:hint="optional"/>
     </LinearLayout>
 
     <LinearLayout
@@ -63,7 +66,8 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/add_ts_time_description_value"/>
+            android:id="@+id/add_ts_time_description_value"
+            android:hint="optional"/>
     </LinearLayout>
 
     <Button

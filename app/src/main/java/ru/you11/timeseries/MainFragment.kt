@@ -45,7 +45,9 @@ class MainFragment: Fragment() {
 
         task.addOnCompleteListener {
             if (!it.isSuccessful) {
+                //show error and hide loading icon
                 Toast.makeText(activity.applicationContext, it.exception?.localizedMessage, Toast.LENGTH_SHORT).show()
+                main_screen_loading_icon.hide()
                 return@addOnCompleteListener
             }
 
@@ -63,6 +65,7 @@ class MainFragment: Fragment() {
             time_series_rw.visibility = RecyclerView.VISIBLE
         }.addOnFailureListener {
             Toast.makeText(activity.applicationContext, it.localizedMessage, Toast.LENGTH_SHORT).show()
+            main_screen_loading_icon.hide()
         }
     }
 
