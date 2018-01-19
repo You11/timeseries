@@ -8,4 +8,14 @@
         android:layout_height="wrap_content"
         android:id="@+id/view_time_series_name" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/view_time_series_creation_date"/>
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:id="@+id/view_time_series_chart" />
+
 </LinearLayout>
