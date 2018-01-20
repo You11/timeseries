@@ -39,7 +39,7 @@ class MainFragment: Fragment() {
         }
 
         //recycler view from fragment
-        time_series_rw.layoutManager = LinearLayoutManager(activity.applicationContext)
+        time_series_rw.layoutManager = LinearLayoutManager(activity)
 
         val timeSeries = ArrayList<TimeSeries>()
         val db = FirebaseFirestore.getInstance()
@@ -47,7 +47,7 @@ class MainFragment: Fragment() {
         task.addOnCompleteListener {
             if (!it.isSuccessful) {
                 //show error and hide loading icon
-                Toast.makeText(activity.applicationContext, "Error:" + it.exception?.localizedMessage, Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "Error:" + it.exception?.localizedMessage, Toast.LENGTH_SHORT).show()
                 main_screen_loading_icon.hide()
                 return@addOnCompleteListener
             }
@@ -62,9 +62,10 @@ class MainFragment: Fragment() {
             }
 
             time_series_rw.adapter = TimeSeriesRecyclerViewAdapter(timeSeries, this)
-            time_series_rw.addItemDecoration(DividerItemDecoration(activity.applicationContext, DividerItemDecoration.VERTICAL))
+            time_series_rw.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
 
-            val swipeHandler = object : SwipeToDelete(activity.applicationContext) {
+            //Create swipe on delete
+            val swipeHandler = object : SwipeToDelete(activity) {
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int) {
                     val position = viewHolder?.adapterPosition
@@ -75,13 +76,13 @@ class MainFragment: Fragment() {
                         db.collection("time_series").document(timeSeries[position].uid.toString())
                                 .delete()
                                 .addOnSuccessListener {
-                                    Toast.makeText(activity.applicationContext, "Time series deleted!", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(activity, "Time series deleted!", Toast.LENGTH_SHORT).show()
                                 }
                                 .addOnFailureListener {
-                                    Toast.makeText(activity.applicationContext, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(activity, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
                                 }
                         } else {
-                            Toast.makeText(activity.applicationContext, "Unexpected things happening in this application!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(activity, "Unexpected things happening in this application!", Toast.LENGTH_SHORT).show()
                         }
                 }
             }
@@ -91,7 +92,7 @@ class MainFragment: Fragment() {
             main_screen_loading_icon.hide()
             time_series_rw.visibility = RecyclerView.VISIBLE
         }.addOnFailureListener {
-            Toast.makeText(activity.applicationContext, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
             main_screen_loading_icon.hide()
         }
     }

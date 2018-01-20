@@ -38,7 +38,7 @@ class AddTimeSeriesFragment: Fragment() {
 
             //check if name is blank
             if (add_ts_name_value.text.isNullOrBlank()) {
-                Toast.makeText(activity.applicationContext, "Please enter name of time series", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "Please enter name of time series", Toast.LENGTH_SHORT).show()
                 add_ts_name_value.requestFocus()
                 return@setOnClickListener
             }
@@ -51,12 +51,12 @@ class AddTimeSeriesFragment: Fragment() {
 
                 //check if they are blank
                 if (dataValueView.text.isNullOrBlank()) {
-                    Toast.makeText(activity.applicationContext, "Please enter data value of time series", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, "Please enter data value of time series", Toast.LENGTH_SHORT).show()
                     dataValueView.requestFocus()
                     return@setOnClickListener
                 }
                 if (timeValueView.text.isNullOrBlank()) {
-                    Toast.makeText(activity.applicationContext, "Please enter time value of time series", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, "Please enter time value of time series", Toast.LENGTH_SHORT).show()
                     timeValueView.requestFocus()
                     return@setOnClickListener
                 }
@@ -68,7 +68,7 @@ class AddTimeSeriesFragment: Fragment() {
                 if (Regex(pattern).matches(dataValue)) {
                     arr.add(dataValue.toDouble())
                 } else {
-                    Toast.makeText(activity.applicationContext, "Please enter valid input", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, "Please enter valid input", Toast.LENGTH_SHORT).show()
                     dataValueView.requestFocus()
                     return@setOnClickListener
                 }
@@ -76,7 +76,7 @@ class AddTimeSeriesFragment: Fragment() {
                 if (Regex(pattern).matches(timeValue)) {
                     arr.add(timeValue.toDouble())
                 } else {
-                    Toast.makeText(activity.applicationContext, "Please enter valid input", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, "Please enter valid input", Toast.LENGTH_SHORT).show()
                     timeValueView.requestFocus()
                     return@setOnClickListener
                 }
@@ -105,24 +105,23 @@ class AddTimeSeriesFragment: Fragment() {
                         activity.fragmentManager.popBackStack()
                     }
                     .addOnFailureListener {
-                        Toast.makeText(activity.applicationContext, "Failed!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity, "Failed!", Toast.LENGTH_SHORT).show()
                     }
         }
     }
 
     //adds value and time edittexts to layout in xml file
     private fun addPointsToLayout(layout: LinearLayout) {
-        val context = activity.applicationContext
-        val newLayout = LinearLayout(context)
+        val newLayout = LinearLayout(activity)
         newLayout.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         newLayout.orientation = LinearLayout.HORIZONTAL
-        val value = EditText(context)
-        val time = EditText(context)
+        val value = EditText(activity)
+        val time = EditText(activity)
         value.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
         value.hint = "data value"
         time.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
         time.hint = "time value"
-        val deleteButton = Button(context)
+        val deleteButton = Button(activity)
         deleteButton.text = "Delete"
         deleteButton.setOnClickListener {
             layout.removeView(newLayout)
