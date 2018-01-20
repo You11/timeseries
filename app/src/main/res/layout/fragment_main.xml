@@ -19,7 +19,8 @@
         android:layout_gravity="center"
         android:id="@+id/main_screen_loading_icon"
         app:indicatorColor="#1976D2"
-        app:indicatorName="BallSpinFadeLoaderIndicator" />
+        app:indicatorName="BallSpinFadeLoaderIndicator"
+        android:layout_marginTop="10dp"/>
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
