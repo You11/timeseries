@@ -4,14 +4,15 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:id="@+id/fragment_main_layout"
-    android:padding="5dp">
+    android:id="@+id/fragment_main_layout" >
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/add_time_series_button"
-        android:text="@string/add_button_text" />
+        android:text="@string/add_button_text"
+        android:background="#00E676"
+        style="@style/Widget.AppCompat.Button.Borderless" />
 
     <com.wang.avi.AVLoadingIndicatorView
         android:layout_width="wrap_content"
@@ -26,5 +27,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/time_series_rw"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </LinearLayout>

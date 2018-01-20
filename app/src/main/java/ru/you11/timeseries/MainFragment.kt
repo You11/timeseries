@@ -2,6 +2,7 @@ package ru.you11.timeseries
 
 import android.app.Fragment
 import android.os.Bundle
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.time_series_card.view.*
 import java.text.SimpleDateFormat
@@ -38,11 +40,9 @@ class MainFragment: Fragment() {
         //recycler view from fragment
         time_series_rw.layoutManager = LinearLayoutManager(activity.applicationContext)
 
-        //test data
         val timeSeries = ArrayList<TimeSeries>()
         val db = FirebaseFirestore.getInstance()
-        val task = db.collection("time_series").get()
-
+        val task = db.collection("time_series").orderBy("creationDate", Query.Direction.DESCENDING).get()
         task.addOnCompleteListener {
             if (!it.isSuccessful) {
                 //show error and hide loading icon
@@ -61,6 +61,7 @@ class MainFragment: Fragment() {
             }
 
             time_series_rw.adapter = TimeSeriesRecyclerViewAdapter(timeSeries, this)
+            time_series_rw.addItemDecoration(DividerItemDecoration(activity.applicationContext, DividerItemDecoration.VERTICAL))
             main_screen_loading_icon.hide()
             time_series_rw.visibility = RecyclerView.VISIBLE
         }.addOnFailureListener {
