@@ -28,6 +28,14 @@
             android:textStyle="italic" />
     </LinearLayout>
 
+    <com.wang.avi.AVLoadingIndicatorView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:id="@+id/view_screen_loading_icon"
+        app:indicatorColor="#1976D2"
+        app:indicatorName="BallSpinFadeLoaderIndicator" />
+
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/view_time_series_chart"
         android:layout_width="match_parent"
@@ -51,11 +59,30 @@
         android:textStyle="italic"
         android:visibility="gone"/>
 
-    <com.wang.avi.AVLoadingIndicatorView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:id="@+id/view_screen_loading_icon"
-        app:indicatorColor="#1976D2"
-        app:indicatorName="BallSpinFadeLoaderIndicator" />
+        android:orientation="horizontal"
+        android:paddingTop="5dp">
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="Edit"
+            android:background="#FFEE58"
+            style="@style/Widget.AppCompat.Button"
+            android:id="@+id/view_time_series_edit_button" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="Delete"
+            android:background="#EF5350"
+            style="@style/Widget.AppCompat.Button"
+            android:id="@+id/view_time_series_delete_button"
+            android:layout_marginLeft="10dp"/>
+
+    </LinearLayout>
 </LinearLayout>

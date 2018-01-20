@@ -69,6 +69,8 @@ class ViewTimeSeriesFragment: Fragment() {
                     view_time_series_y_axis_description.visibility = View.VISIBLE
                     view_screen_loading_icon.hide()
 
+                    view_time_series_edit_button.visibility = View.VISIBLE
+                    view_time_series_delete_button.visibility = View.VISIBLE
                 }
                 .addOnFailureListener {
                     Toast.makeText(activity.applicationContext, "Failed to load data!", Toast.LENGTH_SHORT).show()
