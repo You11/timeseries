@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -46,7 +47,7 @@ class MainFragment: Fragment() {
         task.addOnCompleteListener {
             if (!it.isSuccessful) {
                 //show error and hide loading icon
-                Toast.makeText(activity.applicationContext, it.exception?.localizedMessage, Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity.applicationContext, "Error:" + it.exception?.localizedMessage, Toast.LENGTH_SHORT).show()
                 main_screen_loading_icon.hide()
                 return@addOnCompleteListener
             }
@@ -62,16 +63,42 @@ class MainFragment: Fragment() {
 
             time_series_rw.adapter = TimeSeriesRecyclerViewAdapter(timeSeries, this)
             time_series_rw.addItemDecoration(DividerItemDecoration(activity.applicationContext, DividerItemDecoration.VERTICAL))
+
+            val swipeHandler = object : SwipeToDelete(activity.applicationContext) {
+
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int) {
+                    val position = viewHolder?.adapterPosition
+                    if (position != null && timeSeries[position].uid != null) {
+                        val adapter = time_series_rw.adapter as TimeSeriesRecyclerViewAdapter
+                        adapter.removeAt(position)
+                        //casted to string because kotlin gave warnings despite check earlier
+                        db.collection("time_series").document(timeSeries[position].uid.toString())
+                                .delete()
+                                .addOnSuccessListener {
+                                    Toast.makeText(activity.applicationContext, "Time series deleted!", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(activity.applicationContext, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
+                                }
+                        } else {
+                            Toast.makeText(activity.applicationContext, "Unexpected things happening in this application!", Toast.LENGTH_SHORT).show()
+                        }
+                }
+            }
+            val itemTouchHelper = ItemTouchHelper(swipeHandler)
+            itemTouchHelper.attachToRecyclerView(time_series_rw)
+
             main_screen_loading_icon.hide()
             time_series_rw.visibility = RecyclerView.VISIBLE
         }.addOnFailureListener {
-            Toast.makeText(activity.applicationContext, it.localizedMessage, Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity.applicationContext, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
             main_screen_loading_icon.hide()
         }
     }
 
 
-    class TimeSeriesRecyclerViewAdapter(private val items: ArrayList<TimeSeries>, private val fragment: Fragment): RecyclerView.Adapter<TimeSeriesRecyclerViewAdapter.ViewHolder>() {
+    class TimeSeriesRecyclerViewAdapter(private val items: ArrayList<TimeSeries>,
+                                        private val fragment: Fragment): RecyclerView.Adapter<TimeSeriesRecyclerViewAdapter.ViewHolder>() {
 
         class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             fun bind(timeSeries: TimeSeries) {
@@ -98,5 +125,10 @@ class MainFragment: Fragment() {
         }
 
         override fun getItemCount(): Int = items.size
+
+        fun removeAt(position: Int) {
+            items.removeAt(position)
+            notifyItemRemoved(position)
+        }
     }
 }
