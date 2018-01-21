@@ -6,17 +6,14 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.time_series_card.view.*
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -34,7 +31,7 @@ class MainFragment: Fragment() {
         add_time_series_button.setOnClickListener {
             val addFragment = AddTimeSeriesFragment()
             activity.fragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, addFragment)
+                    .replace(R.id.main_fragment_container, addFragment)
                     .addToBackStack(null)
                     .commit()
         }
@@ -120,7 +117,7 @@ class MainFragment: Fragment() {
                 bundle.putString("uid", items[position].uid)
                 newFragment.arguments = bundle
                 fragment.activity.fragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, newFragment)
+                        .replace(R.id.main_fragment_container, newFragment)
                         .addToBackStack(null)
                         .commit()
             }

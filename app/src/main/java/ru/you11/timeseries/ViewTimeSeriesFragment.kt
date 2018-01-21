@@ -12,8 +12,6 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.view_time_series_fragment.*
 
@@ -65,7 +63,7 @@ class ViewTimeSeriesFragment: Fragment() {
             val bundle = Bundle()
             bundle.putString("editTSid", id)
             fragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
+                    .replace(R.id.main_fragment_container, fragment)
                     .addToBackStack(null)
                     .commit()
             fragment.arguments = bundle

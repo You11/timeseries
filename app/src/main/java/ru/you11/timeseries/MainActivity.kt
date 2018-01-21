@@ -8,7 +8,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 
@@ -22,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
         if (FirebaseAuth.getInstance().currentUser != null) {
             fragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, MainFragment())
+                    .replace(R.id.main_fragment_container, MainFragment())
                     .addToBackStack(null)
                     .commit()
         } else {
@@ -45,8 +44,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         menu?.clear()
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user == null) {
+        //if user isn't logged in
+        if (FirebaseAuth.getInstance().currentUser == null) {
             menuInflater.inflate(R.menu.menu_main, menu)
         } else {
             menuInflater.inflate(R.menu.menu_main_logged_in, menu)
@@ -66,14 +65,12 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
                     restartActivity()
                 }
-
                 return true
             }
 
             R.id.menu_main_user_profile -> {
-                Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, UserProfileActivity()::class.java))
             }
-
         }
 
         return super.onOptionsItemSelected(item)
@@ -89,10 +86,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun restartActivity() {
-        recreate()
         for (i in 0 until fragmentManager.backStackEntryCount) {
             fragmentManager.popBackStack()
         }
+        recreate()
         invalidateOptionsMenu()
     }
 }
