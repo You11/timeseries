@@ -22,7 +22,6 @@ class MainActivity : AppCompatActivity() {
         if (FirebaseAuth.getInstance().currentUser != null) {
             fragmentManager.beginTransaction()
                     .replace(R.id.main_fragment_container, MainFragment())
-                    .addToBackStack(null)
                     .commit()
         } else {
             logIn()

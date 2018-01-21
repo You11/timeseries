@@ -16,7 +16,6 @@ class UserProfileActivity : AppCompatActivity() {
 
         fragmentManager.beginTransaction()
                 .replace(R.id.user_profile_fragment_container, UserProfileFragment())
-                .addToBackStack(null)
                 .commit()
     }
 
