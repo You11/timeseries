@@ -11,28 +11,63 @@
         <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:id="@+id/user_profile_photo"/>
+            android:id="@+id/user_profile_photo"
+            android:contentDescription="Avatar" />
 
-        <TextView
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:layout_toRightOf="@id/user_profile_photo"
-            android:layout_toEndOf="@id/user_profile_photo"
             android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
-            android:id="@+id/user_profile_name"
-            android:gravity="center_vertical"/>
+            android:layout_toRightOf="@id/user_profile_photo"
+            android:layout_toEndOf="@id/user_profile_photo" >
 
-        <TextView
-            android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/user_profile_name"
+                android:gravity="center_vertical"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:id="@+id/user_profile_edit_name"
+                android:inputType="text"
+                android:hint="Your profile name" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_toRightOf="@id/user_profile_photo"
             android:layout_toEndOf="@id/user_profile_photo"
             android:layout_alignBottom="@id/user_profile_photo"
             android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"
-            android:id="@+id/user_profile_email"
-            android:gravity="center_vertical"/>
+            android:layout_marginStart="20dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/user_profile_email"
+                android:gravity="center_vertical"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/user_profile_edit_email"
+                android:inputType="textEmailAddress"
+                android:visibility="gone"
+                android:hint="example@example.com"/>
+        </RelativeLayout>
+
     </RelativeLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:visibility="gone"
+        android:id="@+id/user_profile_save_button" />
 
 </LinearLayout>
