@@ -11,13 +11,17 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlinx.android.synthetic.main.add_time_series_fragment.*
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
 
 /**
- * Created by you11 on 17.01.2018.
+ * Screen for adding new time series. Name and points are required, descriptions are not.
+ * Data are sent to firestore. Also this fragments servers for editing existing time series from
+ * ViewTimeSeriesFragment.
  */
 class AddTimeSeriesFragment: Fragment() {
 
@@ -28,12 +32,48 @@ class AddTimeSeriesFragment: Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        addPointsToLayout(add_ts_points_layout)
-
-        add_ts_points_more_button.setOnClickListener {
-            addPointsToLayout(add_ts_points_layout)
+        if (isEdit()) {
+            fillExistingValues(arguments.getString("editTSid"))
+        } else {
+            //adds first set of points
+            addPointsToLayout(null)
         }
 
+        //"Add More" button
+        add_ts_points_more_button.setOnClickListener {
+            addPointsToLayout(null)
+        }
+
+        //Save and exit
+        setupSaveButton()
+    }
+
+    private fun isEdit() = arguments != null && arguments.getString("editTSid") != null
+
+
+    private fun fillExistingValues(id: String) {
+        FirebaseFirestore.getInstance().collection("time_series").document(id).get()
+                .addOnCompleteListener {
+                    val timeSeries = TimeSeries(it.result["name"].toString(),
+                            it.result["creationDate"].toString(),
+                            null,
+                            it.result["dataValues"] as HashMap<String, List<Double>>)
+                    timeSeries.dataDescription = it.result["dataDescription"].toString()
+                    timeSeries.timeDescription = it.result["timeDescription"].toString()
+                    add_ts_name_value.setText(timeSeries.name)
+                    add_ts_time_description_value.setText(timeSeries.timeDescription)
+                    add_ts_data_description_value.setText(timeSeries.dataDescription)
+                    timeSeries.dataValues?.forEach {
+                        addPointsToLayout(it.value)
+                    }
+                }
+                .addOnFailureListener {
+                    Toast.makeText(activity, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
+                }
+    }
+
+
+    private fun setupSaveButton() {
         save_ts_button.setOnClickListener {
 
             //check if name is blank
@@ -88,7 +128,7 @@ class AddTimeSeriesFragment: Fragment() {
                     SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(Calendar.getInstance().time),
                     null,
                     dataPoints)
-            add_ts_data_description_value?.text.toString().let {
+            add_ts_data_description_value.text.toString().let {
                 ts.dataDescription = it
             }
             add_ts_time_description_value.text.toString().let {
@@ -99,36 +139,62 @@ class AddTimeSeriesFragment: Fragment() {
 
             //send data to firestore
             val db = FirebaseFirestore.getInstance()
-            db.collection("time_series")
-                    .add(ts)
-                    .addOnCompleteListener {
-                        activity.fragmentManager.popBackStack()
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(activity, "Failed!", Toast.LENGTH_SHORT).show()
-                    }
+
+            if (isEdit()) {
+                db.collection("time_series").document(arguments.getString("editTSid"))
+                        .set(ts, SetOptions.merge())
+                        .addOnCompleteListener {
+                            fragmentManager.popBackStack()
+                        }
+                        .addOnFailureListener {
+                            showErrorMessage(it)
+                            fragmentManager.popBackStack()
+                        }
+            } else {
+                db.collection("time_series")
+                        .add(ts)
+                        .addOnCompleteListener {
+                            fragmentManager.popBackStack()
+                        }
+                        .addOnFailureListener {
+                            showErrorMessage(it)
+                            fragmentManager.popBackStack()
+                        }
+            }
         }
     }
 
+    private fun showErrorMessage(it: Exception) {
+        Toast.makeText(activity, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
+    }
+
     //adds value and time edittexts to layout in xml file
-    private fun addPointsToLayout(layout: LinearLayout) {
+    private fun addPointsToLayout(defaultValues: List<Double>?) {
         val newLayout = LinearLayout(activity)
         newLayout.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         newLayout.orientation = LinearLayout.HORIZONTAL
+
         val value = EditText(activity)
         val time = EditText(activity)
         value.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
         value.hint = "data value"
         time.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
         time.hint = "time value"
+        if (defaultValues != null) {
+            value.setText(defaultValues[0].toString())
+            time.setText(defaultValues[1].toString())
+        }
+
+        //deletes this layout
         val deleteButton = Button(activity)
         deleteButton.text = "Delete"
         deleteButton.setOnClickListener {
-            layout.removeView(newLayout)
+            add_ts_points_layout.removeView(newLayout)
         }
+
         newLayout.addView(value)
         newLayout.addView(time)
         newLayout.addView(deleteButton)
-        layout.addView(newLayout)
+        add_ts_points_layout.addView(newLayout)
     }
 }

@@ -31,35 +31,26 @@ class ViewTimeSeriesFragment: Fragment() {
 
         FirebaseFirestore.getInstance().collection("time_series").document(arguments.getString("uid")).get()
                 .addOnCompleteListener {
-                    view_time_series_name.text = it.result["name"].toString()
-                    view_time_series_creation_date.text = it.result["creationDate"].toString()
 
-                    setupCharts(it)
+                    val timeSeries = TimeSeries(it.result["name"].toString(),
+                            it.result["creationDate"].toString(),
+                            null,
+                            it.result["dataValues"] as HashMap<String, List<Double>>)
+                    timeSeries.dataDescription = it.result["dataDescription"].toString()
+                    timeSeries.timeDescription = it.result["timeDescription"].toString()
+                    timeSeries.uid = arguments.getString("uid")
 
-                    view_time_series_edit_button.visibility = View.VISIBLE
-                    view_time_series_delete_button.visibility = View.VISIBLE
-                    view_time_series_delete_button.setOnClickListener {
-                        val alertDialog = AlertDialog.Builder(activity)
-                        alertDialog.setTitle("Confirm")
-                                .setMessage("Do you want to delete this time series?")
-                                .setPositiveButton("Ok", { dialog, which ->
-                                    //deletes entry from firestore and exits
-                                    FirebaseFirestore.getInstance().collection("time_series")
-                                            .document(arguments.getString("uid"))
-                                            .delete()
-                                            .addOnSuccessListener {
-                                                Toast.makeText(activity, "Deleted!", Toast.LENGTH_SHORT).show()
-                                                fragmentManager.popBackStack()
-                                            }
-                                            .addOnFailureListener {
-                                                Toast.makeText(activity, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
-                                            }
-                        })
-                                .setNegativeButton("Cancel", { dialog, which ->
+                    view_time_series_name.text = timeSeries.name
+                    view_time_series_creation_date.text = timeSeries.creationDate
 
-                        })
-                        alertDialog.show()
+                    setupCharts(timeSeries)
+
+                    val id = timeSeries.uid
+                    if (id != null) {
+                        setupEditButton(id)
                     }
+
+                    setupDeleteButton()
                 }
                 .addOnFailureListener {
                     Toast.makeText(activity, "Failed to load data!", Toast.LENGTH_SHORT).show()
@@ -67,16 +58,57 @@ class ViewTimeSeriesFragment: Fragment() {
                 }
     }
 
-    private fun setupCharts(task: Task<DocumentSnapshot>) {
+    private fun setupEditButton(id: String) {
+        view_time_series_edit_button.visibility = View.VISIBLE
+        view_time_series_edit_button.setOnClickListener {
+            val fragment = AddTimeSeriesFragment()
+            //maybe should serialize
+            val bundle = Bundle()
+            bundle.putString("editTSid", id)
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            fragment.arguments = bundle
+        }
+    }
+
+    private fun setupDeleteButton() {
+        //setup delete button
+        view_time_series_delete_button.visibility = View.VISIBLE
+        view_time_series_delete_button.setOnClickListener {
+            val alertDialog = AlertDialog.Builder(activity)
+            alertDialog.setTitle("Confirm")
+                    .setMessage("Do you want to delete this time series?")
+                    .setPositiveButton("Ok", { dialog, which ->
+                        //deletes entry from firestore and exits
+                        FirebaseFirestore.getInstance().collection("time_series")
+                                .document(arguments.getString("uid"))
+                                .delete()
+                                .addOnSuccessListener {
+                                    Toast.makeText(activity, "Deleted!", Toast.LENGTH_SHORT).show()
+                                    fragmentManager.popBackStack()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(activity, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
+                                }
+                    })
+                    .setNegativeButton("Cancel", { dialog, which ->
+
+                    })
+            alertDialog.show()
+        }
+    }
+
+    private fun setupCharts(timeSeries: TimeSeries) {
         //points array
         val entries = ArrayList<Entry>()
-        val data = task.result["dataValues"] as HashMap<*, *>
-        data.forEach {
+        timeSeries.dataValues?.forEach {
             val values = it.value as List<*>
             entries.add(Entry(values[0].toString().toFloat(), values[1].toString().toFloat()))
         }
 
-        val dataSet = LineDataSet(entries, task.result["dataDescription"].toString())
+        val dataSet = LineDataSet(entries, timeSeries.dataDescription)
         //chart style
         dataSet.lineWidth = 1.5f
         dataSet.color = Color.BLUE
@@ -97,9 +129,9 @@ class ViewTimeSeriesFragment: Fragment() {
         view_time_series_chart.invalidate()
         view_time_series_chart.visibility = View.VISIBLE
         //add descriptions to axis
-        view_time_series_x_axis_description.append(task.result["dataDescription"].toString())
+        view_time_series_x_axis_description.append(timeSeries.dataDescription)
         view_time_series_x_axis_description.visibility = View.VISIBLE
-        view_time_series_y_axis_description.append(task.result["timeDescription"].toString())
+        view_time_series_y_axis_description.append(timeSeries.timeDescription)
         view_time_series_y_axis_description.visibility = View.VISIBLE
         view_screen_loading_icon.hide()
     }
