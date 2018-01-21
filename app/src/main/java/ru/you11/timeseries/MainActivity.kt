@@ -20,14 +20,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user == null) {
-            
-        } else {
+        if (FirebaseAuth.getInstance().currentUser != null) {
             fragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, MainFragment())
                     .addToBackStack(null)
                     .commit()
+        } else {
+            logIn()
         }
     }
 
@@ -35,8 +34,6 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == signIn) {
-            val response = IdpResponse.fromResultIntent(data)
-
             if (resultCode == Activity.RESULT_OK) {
                 Toast.makeText(this, "Logged in", Toast.LENGTH_SHORT).show()
                 restartActivity()
@@ -60,13 +57,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_main_login -> {
-                val providers = Arrays.asList(AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build())
-
-                startActivityForResult(AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .build(), signIn)
-
+                logIn()
                 return true
             }
 
@@ -86,6 +77,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun logIn() {
+        val providers = Arrays.asList(AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build())
+
+        startActivityForResult(AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setAvailableProviders(providers)
+                .build(), signIn)
     }
 
     private fun restartActivity() {
