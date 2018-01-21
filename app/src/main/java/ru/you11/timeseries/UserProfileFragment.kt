@@ -113,7 +113,8 @@ class UserProfileFragment: Fragment() {
                                             .addOnFailureListener {
                                                 if (it is FirebaseAuthRecentLoginRequiredException) {
                                                     val passwordInputView = EditText(activity)
-                                                    passwordInputView.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
+                                                    passwordInputView.setPadding(20, 20, 20, 20)
+                                                    passwordInputView.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                                                     val askPasswordDialog = AlertDialog.Builder(activity)
                                                     askPasswordDialog.setTitle("Password")
                                                             .setMessage("Please input password for " + user.email)
@@ -138,8 +139,8 @@ class UserProfileFragment: Fragment() {
                                                                 dialog.dismiss()
                                                             })
                                                     askPasswordDialog.show()
-                                                }
-                                                Toast.makeText(activity, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
+                                                } else
+                                                    Toast.makeText(activity, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
                                             }
                                 })
                                 .setNegativeButton("No", { dialog, which ->
