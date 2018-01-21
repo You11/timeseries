@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -47,7 +48,8 @@ class MainFragment: Fragment() {
         task.addOnCompleteListener {
             if (!it.isSuccessful) {
                 //show error and hide loading icon
-                Toast.makeText(activity, "Error:" + it.exception?.localizedMessage, Toast.LENGTH_SHORT).show()
+//                if (FirebaseAuth.getInstance().currentUser != null)
+                    Toast.makeText(activity, "Error:" + it.exception?.localizedMessage, Toast.LENGTH_SHORT).show()
                 main_screen_loading_icon.hide()
                 return@addOnCompleteListener
             }
