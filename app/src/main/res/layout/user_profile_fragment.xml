@@ -9,29 +9,29 @@
         android:padding="10dp">
 
         <ImageView
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:id="@+id/user_profile_photo"/>
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="75dp"
+            android:layout_height="50dp"
             android:layout_toRightOf="@id/user_profile_photo"
             android:layout_toEndOf="@id/user_profile_photo"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:id="@+id/user_profile_name"
-            android:text="meow"
             android:gravity="center_vertical"/>
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="75dp"
+            android:layout_height="50dp"
             android:layout_toRightOf="@id/user_profile_photo"
             android:layout_toEndOf="@id/user_profile_photo"
             android:layout_alignBottom="@id/user_profile_photo"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:id="@+id/user_profile_email"
-            android:text="meow"
             android:gravity="center_vertical"/>
     </RelativeLayout>
 
