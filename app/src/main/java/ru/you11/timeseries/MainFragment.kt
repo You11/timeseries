@@ -55,7 +55,6 @@ class MainFragment: Fragment() {
             it.result.forEach {
                 val element = TimeSeries(it["name"].toString(),
                         it["creationDate"].toString(),
-                        null,
                         null)
                 element.uid = it.id
                 timeSeries.add(element)

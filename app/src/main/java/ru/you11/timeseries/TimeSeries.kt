@@ -8,7 +8,6 @@ import kotlin.collections.HashMap
  */
 class TimeSeries(var name: String,
                  val creationDate: String,
-                 var changeDate: String?,
                  var dataValues: HashMap<String, List<Double>>?) {
 
     var dataDescription: String? = null

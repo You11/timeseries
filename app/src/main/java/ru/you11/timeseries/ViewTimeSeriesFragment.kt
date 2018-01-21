@@ -34,7 +34,6 @@ class ViewTimeSeriesFragment: Fragment() {
 
                     val timeSeries = TimeSeries(it.result["name"].toString(),
                             it.result["creationDate"].toString(),
-                            null,
                             it.result["dataValues"] as HashMap<String, List<Double>>)
                     timeSeries.dataDescription = it.result["dataDescription"].toString()
                     timeSeries.timeDescription = it.result["timeDescription"].toString()
@@ -94,7 +93,7 @@ class ViewTimeSeriesFragment: Fragment() {
                                 }
                     })
                     .setNegativeButton("Cancel", { dialog, which ->
-
+                        dialog.dismiss()
                     })
             alertDialog.show()
         }

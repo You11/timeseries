@@ -56,7 +56,6 @@ class AddTimeSeriesFragment: Fragment() {
                 .addOnCompleteListener {
                     val timeSeries = TimeSeries(it.result["name"].toString(),
                             it.result["creationDate"].toString(),
-                            null,
                             it.result["dataValues"] as HashMap<String, List<Double>>)
                     timeSeries.dataDescription = it.result["dataDescription"].toString()
                     timeSeries.timeDescription = it.result["timeDescription"].toString()
@@ -126,7 +125,6 @@ class AddTimeSeriesFragment: Fragment() {
 
             val ts = TimeSeries(add_ts_name_value.text.toString(),
                     SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(Calendar.getInstance().time),
-                    null,
                     dataPoints)
             add_ts_data_description_value.text.toString().let {
                 ts.dataDescription = it
