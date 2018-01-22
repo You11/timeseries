@@ -1,6 +1,7 @@
 package ru.you11.timeseries
 
 import android.app.Fragment
+import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
@@ -171,13 +172,19 @@ class AddTimeSeriesFragment: Fragment() {
         val newLayout = LinearLayout(activity)
         newLayout.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         newLayout.orientation = LinearLayout.HORIZONTAL
+        val layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT)
+        layoutParams.topMargin = 10
+        layoutParams.bottomMargin = 10
+        newLayout.layoutParams = layoutParams
 
         val value = EditText(activity)
         val time = EditText(activity)
         value.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
-        value.hint = "data value"
+        value.hint = "X value"
         time.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
-        time.hint = "time value"
+        time.hint = "Y value"
         if (defaultValues != null) {
             value.setText(defaultValues[0].toString())
             time.setText(defaultValues[1].toString())
@@ -185,7 +192,15 @@ class AddTimeSeriesFragment: Fragment() {
 
         //deletes this layout
         val deleteButton = Button(activity)
+        val deleteButtonParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT)
+        deleteButton.layoutParams = deleteButtonParams
+        deleteButtonParams.leftMargin = 10
+        deleteButtonParams.rightMargin = 10
         deleteButton.text = "Delete"
+        deleteButton.setBackgroundColor(Color.parseColor("#EF5350"))
+        deleteButton.setPadding(10, 0, 10, 0)
         deleteButton.setOnClickListener {
             add_ts_points_layout.removeView(newLayout)
         }

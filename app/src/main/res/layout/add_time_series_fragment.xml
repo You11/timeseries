@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp">
+    android:padding="10dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -23,7 +23,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enter data and time points:"/>
+        android:layout_marginTop="20dp"
+        android:text="Enter data points:"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -36,17 +37,23 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:text="Add more"
-        android:id="@+id/add_ts_points_more_button"/>
+        android:id="@+id/add_ts_points_more_button"
+        android:background="#FFEE58"
+        style="@style/Widget.AppCompat.Button"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Enter data description:"/>
+            android:text="Enter X axis description:"/>
 
         <EditText
             android:layout_width="wrap_content"
@@ -61,7 +68,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Enter time description:"/>
+            android:text="Enter Y axis description:"/>
 
         <EditText
             android:layout_width="wrap_content"
@@ -74,5 +81,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save"
+        android:background="#00E676"
         android:id="@+id/save_ts_button"/>
 </LinearLayout>
