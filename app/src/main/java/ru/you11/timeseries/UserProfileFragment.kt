@@ -107,8 +107,10 @@ class UserProfileFragment: Fragment() {
 
                                     user.updateEmail(emailInput)
                                             .addOnCompleteListener {
-                                                Toast.makeText(activity, "Email changed!", Toast.LENGTH_SHORT).show()
-                                                user_profile_email.text = emailInput
+                                                if (it.isSuccessful) {
+                                                    Toast.makeText(activity, "Email changed!", Toast.LENGTH_SHORT).show()
+                                                    user_profile_email.text = emailInput
+                                                }
                                             }
                                             .addOnFailureListener {
                                                 if (it is FirebaseAuthRecentLoginRequiredException) {

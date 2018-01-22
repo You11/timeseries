@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
         if (FirebaseAuth.getInstance().currentUser != null) {
             fragmentManager.beginTransaction()
-                    .replace(R.id.main_fragment_container, MainFragment())
+                    .replace(R.id.main_fragment_container, MainFragment(), "mainFragment")
                     .commit()
         } else {
             logIn()
@@ -88,7 +88,11 @@ class MainActivity : AppCompatActivity() {
         for (i in 0 until fragmentManager.backStackEntryCount) {
             fragmentManager.popBackStack()
         }
+        //because fragment stays on screen otherwise
+        val fragment = fragmentManager.findFragmentByTag("mainFragment")
+        if (fragment != null) {
+            fragmentManager.beginTransaction().remove(fragment).commit()
+        }
         recreate()
-        invalidateOptionsMenu()
     }
 }
