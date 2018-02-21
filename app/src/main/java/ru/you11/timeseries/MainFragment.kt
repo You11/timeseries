@@ -36,16 +36,16 @@ class MainFragment: Fragment() {
                     .commit()
         }
 
-        //recycler view from fragment
+        //time series are displayed in it
         time_series_rw.layoutManager = LinearLayoutManager(activity)
 
+        //gets all time series from firestore
         val timeSeries = ArrayList<TimeSeries>()
         val db = FirebaseFirestore.getInstance()
         val task = db.collection("time_series").orderBy("creationDate", Query.Direction.DESCENDING).get()
         task.addOnCompleteListener {
             if (!it.isSuccessful) {
                 //show error and hide loading icon
-//                if (FirebaseAuth.getInstance().currentUser != null)
                 Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.exception?.localizedMessage, Toast.LENGTH_SHORT).show()
                 main_screen_loading_icon.hide()
                 return@addOnCompleteListener
@@ -55,6 +55,7 @@ class MainFragment: Fragment() {
                 val element = TimeSeries(it["name"].toString(),
                         it["creationDate"].toString(),
                         null)
+                //we need that id for loading specific time series
                 element.uid = it.id
                 timeSeries.add(element)
             }
@@ -62,26 +63,26 @@ class MainFragment: Fragment() {
             time_series_rw.adapter = TimeSeriesRecyclerViewAdapter(timeSeries, this)
             time_series_rw.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
 
-            //Create swipe on delete
+            //Creates swipe on delete
             val swipeHandler = object : SwipeToDelete(activity) {
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int) {
                     val position = viewHolder?.adapterPosition
-                    if (position != null && timeSeries[position].uid != null) {
-                        val adapter = time_series_rw.adapter as TimeSeriesRecyclerViewAdapter
-                        adapter.removeAt(position)
-                        //casted to string because kotlin gave warnings despite check earlier
-                        db.collection("time_series").document(timeSeries[position].uid.toString())
-                                .delete()
-                                .addOnSuccessListener {
-                                    Toast.makeText(activity, getString(R.string.time_series_deleted_message), Toast.LENGTH_SHORT).show()
-                                }
-                                .addOnFailureListener {
-                                    Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
-                                }
-                    } else {
+                    if (position == null) {
                         Toast.makeText(activity, getString(R.string.error), Toast.LENGTH_SHORT).show()
+                        return
                     }
+                    val uid = timeSeries[position].uid ?: return
+                    val adapter = time_series_rw.adapter as TimeSeriesRecyclerViewAdapter
+                    adapter.removeAt(position)
+                    db.collection("time_series").document(uid)
+                            .delete()
+                            .addOnSuccessListener {
+                                Toast.makeText(activity, getString(R.string.time_series_deleted_message), Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
+                            }
                 }
             }
             val itemTouchHelper = ItemTouchHelper(swipeHandler)
@@ -112,6 +113,7 @@ class MainFragment: Fragment() {
         override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
             holder?.bind(items[position])
             holder?.itemView?.setOnClickListener {
+                //loads fragments with selected time series
                 val newFragment = ViewTimeSeriesFragment()
                 val bundle = Bundle()
                 bundle.putString("uid", items[position].uid)

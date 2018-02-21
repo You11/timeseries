@@ -48,6 +48,7 @@ class ViewTimeSeriesFragment: Fragment() {
                     }
 
                     setupDeleteButton()
+                    view_screen_loading_icon.hide()
                 }
                 .addOnFailureListener {
                     Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
@@ -130,6 +131,5 @@ class ViewTimeSeriesFragment: Fragment() {
         view_time_series_x_axis_description.visibility = View.VISIBLE
         view_time_series_y_axis_description.append(timeSeries.timeDescription)
         view_time_series_y_axis_description.visibility = View.VISIBLE
-        view_screen_loading_icon.hide()
     }
 }

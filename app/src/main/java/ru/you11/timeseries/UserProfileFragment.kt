@@ -33,7 +33,7 @@ class UserProfileFragment: Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //circular avatars
+        //makes image circular
         class CircularPicassoImage: Callback {
             override fun onSuccess() {
                 val imageBitmap = (user_profile_photo.drawable as BitmapDrawable).bitmap
@@ -43,6 +43,7 @@ class UserProfileFragment: Fragment() {
                 user_profile_photo.setImageDrawable(imageDrawable)
             }
 
+            //sets default picture from drawable
             override fun onError() {
                 user_profile_photo.setImageResource(R.drawable.user)
             }
@@ -80,70 +81,12 @@ class UserProfileFragment: Fragment() {
 
                     val nameInput = user_profile_edit_name.text.toString()
                     if (nameInput != user.displayName) {
-                        val profileChangeRequest = UserProfileChangeRequest.Builder()
-                                .setDisplayName(nameInput).build()
-
-                        user.updateProfile(profileChangeRequest)
-                                .addOnSuccessListener {
-                                    Toast.makeText(activity, getString(R.string.username_changed_message), Toast.LENGTH_SHORT).show()
-                                    user_profile_name.text = nameInput
-                                }
-                                .addOnFailureListener {
-                                    Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
-                                }
+                        changeUsername(nameInput, user)
                     }
 
                     val emailInput = user_profile_edit_email.text.toString()
                     if (emailInput != user.email) {
-                        val confirmationDialog = AlertDialog.Builder(activity)
-                        confirmationDialog.setTitle(getString(R.string.email_change_dialog_title))
-                                .setMessage(getString(R.string.email_change_dialog_message))
-                                .setPositiveButton(getString(R.string.email_change_dialog_positive_btn), { dialog, which ->
-
-                                    user.updateEmail(emailInput)
-                                            .addOnCompleteListener {
-                                                if (it.isSuccessful) {
-                                                    Toast.makeText(activity, getString(R.string.email_changed_message), Toast.LENGTH_SHORT).show()
-                                                    user_profile_email.text = emailInput
-                                                }
-                                            }
-                                            .addOnFailureListener {
-                                                if (it is FirebaseAuthRecentLoginRequiredException) {
-                                                    val passwordInputView = EditText(activity)
-                                                    passwordInputView.setPadding(20, 20, 20, 20)
-                                                    passwordInputView.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                                                    val askPasswordDialog = AlertDialog.Builder(activity)
-                                                    askPasswordDialog.setTitle(getString(R.string.ask_password_dialog_title))
-                                                            .setMessage(getString(R.string.ask_password_dialog_message) + user.email)
-                                                            .setView(passwordInputView)
-                                                            .setPositiveButton(getString(R.string.ask_password_dialog_positive_btn), { dialog, which ->
-                                                                val credential = EmailAuthProvider.getCredential(user.email!!, passwordInputView.text.toString())
-                                                                user.reauthenticate(credential).addOnCompleteListener {
-                                                                    user.updateEmail(emailInput)
-                                                                            .addOnCompleteListener {
-                                                                                Toast.makeText(activity, getString(R.string.email_changed_message), Toast.LENGTH_SHORT).show()
-                                                                                user_profile_email.text = emailInput
-                                                                            }
-                                                                            .addOnFailureListener {
-                                                                                Toast.makeText(activity, getString(R.string.error_with_localized_message), Toast.LENGTH_SHORT).show()
-                                                                            }
-                                                                }
-                                                                .addOnFailureListener {
-                                                                    Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
-                                                                }
-                                                            })
-                                                            .setNegativeButton(getString(R.string.ask_password_dialog_negative_btn), { dialog, which ->
-                                                                dialog.dismiss()
-                                                            })
-                                                    askPasswordDialog.show()
-                                                } else
-                                                    Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
-                                            }
-                                })
-                                .setNegativeButton(getString(R.string.email_change_dialog_negative_btn), { dialog, which ->
-                                    dialog.dismiss()
-                                })
-                        confirmationDialog.show()
+                        showEmailChangeDialog(user, emailInput)
                     }
 
                     //show text views, hide edit texts and save button
@@ -157,5 +100,83 @@ class UserProfileFragment: Fragment() {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun changeUsername(nameInput: String, user: FirebaseUser) {
+        val profileChangeRequest = UserProfileChangeRequest.Builder()
+                .setDisplayName(nameInput).build()
+
+        user.updateProfile(profileChangeRequest)
+                .addOnSuccessListener {
+                    Toast.makeText(activity, getString(R.string.username_changed_message), Toast.LENGTH_SHORT).show()
+                    user_profile_name.text = nameInput
+                }
+                .addOnFailureListener {
+                    Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
+                }
+    }
+
+    private fun showEmailChangeDialog(user: FirebaseUser, emailInput: String) {
+        val confirmationDialog = AlertDialog.Builder(activity)
+        confirmationDialog.setTitle(getString(R.string.email_change_dialog_title))
+                .setMessage(getString(R.string.email_change_dialog_message))
+                .setPositiveButton(getString(R.string.email_change_dialog_positive_btn), { dialog, which ->
+
+                    user.updateEmail(emailInput)
+                            .addOnCompleteListener {
+                                if (it.isSuccessful) {
+                                    Toast.makeText(activity, getString(R.string.email_changed_message), Toast.LENGTH_SHORT).show()
+                                    user_profile_email.text = emailInput
+                                }
+                            }
+                            .addOnFailureListener {
+                                if (it is FirebaseAuthRecentLoginRequiredException) {
+                                    requestPassword(user, emailInput)
+                                } else
+                                    Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
+                            }
+                })
+                .setNegativeButton(getString(R.string.email_change_dialog_negative_btn), { dialog, which ->
+                    dialog.dismiss()
+                })
+        confirmationDialog.show()
+    }
+
+    //if user didn't authenticated for a long time
+    private fun requestPassword(user: FirebaseUser, emailInput: String) {
+        //setupPasswordInput
+        val passwordInputView = EditText(activity)
+        passwordInputView.setPadding(20, 20, 20, 20)
+        passwordInputView.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+
+        //creates dialog which asks for password
+        val askPasswordDialog = AlertDialog.Builder(activity)
+        askPasswordDialog.setTitle(getString(R.string.ask_password_dialog_title))
+                .setMessage(getString(R.string.ask_password_dialog_message) + user.email)
+                .setView(passwordInputView)
+                .setPositiveButton(getString(R.string.ask_password_dialog_positive_btn), { dialog, which ->
+                    val credential = EmailAuthProvider.getCredential(user.email!!, passwordInputView.text.toString())
+                    user.reauthenticate(credential).addOnCompleteListener {
+                        changeEmail(user, emailInput)
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
+                    }
+                })
+                .setNegativeButton(getString(R.string.ask_password_dialog_negative_btn), { dialog, which ->
+                    dialog.dismiss()
+                })
+        askPasswordDialog.show()
+    }
+
+    private fun changeEmail(user: FirebaseUser, emailInput: String) {
+        user.updateEmail(emailInput)
+                .addOnCompleteListener {
+                    Toast.makeText(activity, getString(R.string.email_changed_message), Toast.LENGTH_SHORT).show()
+                    user_profile_email.text = emailInput
+                }
+                .addOnFailureListener {
+                    Toast.makeText(activity, getString(R.string.error_with_localized_message), Toast.LENGTH_SHORT).show()
+                }
     }
 }
