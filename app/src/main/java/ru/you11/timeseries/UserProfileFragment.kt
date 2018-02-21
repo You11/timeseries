@@ -1,7 +1,6 @@
 package ru.you11.timeseries
 
 import android.app.Fragment
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,12 +9,8 @@ import android.widget.Toast
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.user_profile_fragment.*
-import android.opengl.ETC1.getHeight
-import android.opengl.ETC1.getWidth
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.Bitmap
 import android.support.v7.app.AlertDialog
 import android.text.InputType
 import android.view.MenuItem
@@ -90,25 +85,25 @@ class UserProfileFragment: Fragment() {
 
                         user.updateProfile(profileChangeRequest)
                                 .addOnSuccessListener {
-                                    Toast.makeText(activity, "Username changed!", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(activity, getString(R.string.username_changed_message), Toast.LENGTH_SHORT).show()
                                     user_profile_name.text = nameInput
                                 }
                                 .addOnFailureListener {
-                                    Toast.makeText(activity, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
                                 }
                     }
 
                     val emailInput = user_profile_edit_email.text.toString()
                     if (emailInput != user.email) {
                         val confirmationDialog = AlertDialog.Builder(activity)
-                        confirmationDialog.setTitle("Confirm")
-                                .setMessage("Do you wish to change your email?")
-                                .setPositiveButton("Yes", { dialog, which ->
+                        confirmationDialog.setTitle(getString(R.string.email_change_dialog_title))
+                                .setMessage(getString(R.string.email_change_dialog_message))
+                                .setPositiveButton(getString(R.string.email_change_dialog_positive_btn), { dialog, which ->
 
                                     user.updateEmail(emailInput)
                                             .addOnCompleteListener {
                                                 if (it.isSuccessful) {
-                                                    Toast.makeText(activity, "Email changed!", Toast.LENGTH_SHORT).show()
+                                                    Toast.makeText(activity, getString(R.string.email_changed_message), Toast.LENGTH_SHORT).show()
                                                     user_profile_email.text = emailInput
                                                 }
                                             }
@@ -118,34 +113,34 @@ class UserProfileFragment: Fragment() {
                                                     passwordInputView.setPadding(20, 20, 20, 20)
                                                     passwordInputView.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                                                     val askPasswordDialog = AlertDialog.Builder(activity)
-                                                    askPasswordDialog.setTitle("Password")
-                                                            .setMessage("Please input password for " + user.email)
+                                                    askPasswordDialog.setTitle(getString(R.string.ask_password_dialog_title))
+                                                            .setMessage(getString(R.string.ask_password_dialog_message) + user.email)
                                                             .setView(passwordInputView)
-                                                            .setPositiveButton("Ok", { dialog, which ->
+                                                            .setPositiveButton(getString(R.string.ask_password_dialog_positive_btn), { dialog, which ->
                                                                 val credential = EmailAuthProvider.getCredential(user.email!!, passwordInputView.text.toString())
                                                                 user.reauthenticate(credential).addOnCompleteListener {
                                                                     user.updateEmail(emailInput)
                                                                             .addOnCompleteListener {
-                                                                                Toast.makeText(activity, "Email changed!", Toast.LENGTH_SHORT).show()
+                                                                                Toast.makeText(activity, getString(R.string.email_changed_message), Toast.LENGTH_SHORT).show()
                                                                                 user_profile_email.text = emailInput
                                                                             }
                                                                             .addOnFailureListener {
-                                                                                Toast.makeText(activity, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
+                                                                                Toast.makeText(activity, getString(R.string.error_with_localized_message), Toast.LENGTH_SHORT).show()
                                                                             }
                                                                 }
                                                                 .addOnFailureListener {
-                                                                    Toast.makeText(activity, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
+                                                                    Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
                                                                 }
                                                             })
-                                                            .setNegativeButton("Cancel", { dialog, which ->
+                                                            .setNegativeButton(getString(R.string.ask_password_dialog_negative_btn), { dialog, which ->
                                                                 dialog.dismiss()
                                                             })
                                                     askPasswordDialog.show()
                                                 } else
-                                                    Toast.makeText(activity, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
+                                                    Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
                                             }
                                 })
-                                .setNegativeButton("No", { dialog, which ->
+                                .setNegativeButton(getString(R.string.email_change_dialog_negative_btn), { dialog, which ->
                                     dialog.dismiss()
                                 })
                         confirmationDialog.show()

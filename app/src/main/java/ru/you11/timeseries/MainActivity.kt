@@ -33,10 +33,11 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == signIn) {
             if (resultCode == Activity.RESULT_OK) {
-                Toast.makeText(this, "Logged in", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.logged_in_message), Toast.LENGTH_SHORT).show()
+                //to reset layout
                 restartActivity()
             } else {
-                Toast.makeText(this, "Failed to logged in!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.failed_to_logged_in_message), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -61,7 +62,8 @@ class MainActivity : AppCompatActivity() {
 
             R.id.menu_main_logout -> {
                 AuthUI.getInstance().signOut(this).addOnCompleteListener {
-                    Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.logged_out_message), Toast.LENGTH_SHORT).show()
+                    //reset layout
                     restartActivity()
                 }
                 return true

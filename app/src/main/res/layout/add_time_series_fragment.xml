@@ -11,25 +11,25 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name:"/>
+            android:text="@string/add_ts_name_text"/>
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/add_ts_name_value"
-            android:hint="required"/>
+            android:hint="@string/add_ts_name_input_hint"/>
     </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Enter data points:"/>
+        android:text="@string/add_ts_data_points_text"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/add_ts_points_layout"
+        android:id="@+id/add_ts_add_points_layout"
         android:orientation="vertical" >
 
     </LinearLayout>
@@ -40,8 +40,8 @@
         android:layout_marginTop="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:text="Add more"
-        android:id="@+id/add_ts_points_more_button"
+        android:text="@string/add_ts_add_more_button"
+        android:id="@+id/add_ts_add_more_button"
         android:background="#FFEE58"
         style="@style/Widget.AppCompat.Button"/>
 
@@ -53,13 +53,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Enter X axis description:"/>
+            android:text="@string/add_ts_x_axis_desc_text"/>
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/add_ts_data_description_value"
-            android:hint="optional"/>
+            android:id="@+id/add_ts_x_axis_description_value"
+            android:hint="@string/add_ts_x_axis_desc_input_hint"/>
     </LinearLayout>
 
     <LinearLayout
@@ -68,19 +68,19 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Enter Y axis description:"/>
+            android:text="@string/add_ts_y_axis_desc_text"/>
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/add_ts_time_description_value"
-            android:hint="optional"/>
+            android:id="@+id/add_ts_y_axis_description_value"
+            android:hint="@string/add_ts_y_axis_desc_input_hint"/>
     </LinearLayout>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save"
+        android:text="@string/add_ts_save_button"
         android:background="#00E676"
-        android:id="@+id/save_ts_button"/>
+        android:id="@+id/add_ts_save_button"/>
 </LinearLayout>

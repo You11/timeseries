@@ -12,7 +12,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:id="@+id/user_profile_photo"
-            android:contentDescription="Avatar" />
+            android:contentDescription="@string/user_profile_picture_description" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -34,7 +34,7 @@
                 android:visibility="gone"
                 android:id="@+id/user_profile_edit_name"
                 android:inputType="text"
-                android:hint="Your profile name" />
+                android:hint="@string/user_profile_name_hint" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -58,7 +58,7 @@
                 android:id="@+id/user_profile_edit_email"
                 android:inputType="textEmailAddress"
                 android:visibility="gone"
-                android:hint="example@example.com"/>
+                android:hint="@string/user_profile_email_hint"/>
         </RelativeLayout>
 
     </RelativeLayout>
@@ -66,7 +66,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save"
+        android:text="@string/user_profile_save_button"
         android:visibility="gone"
         android:id="@+id/user_profile_save_button" />
 

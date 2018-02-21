@@ -41,7 +41,7 @@ class AddTimeSeriesFragment: Fragment() {
         }
 
         //"Add More" button
-        add_ts_points_more_button.setOnClickListener {
+        add_ts_add_more_button.setOnClickListener {
             addPointsToLayout(null)
         }
 
@@ -61,63 +61,63 @@ class AddTimeSeriesFragment: Fragment() {
                     timeSeries.dataDescription = it.result["dataDescription"].toString()
                     timeSeries.timeDescription = it.result["timeDescription"].toString()
                     add_ts_name_value.setText(timeSeries.name)
-                    add_ts_time_description_value.setText(timeSeries.timeDescription)
-                    add_ts_data_description_value.setText(timeSeries.dataDescription)
+                    add_ts_y_axis_description_value.setText(timeSeries.timeDescription)
+                    add_ts_x_axis_description_value.setText(timeSeries.dataDescription)
                     timeSeries.dataValues?.forEach {
                         addPointsToLayout(it.value)
                     }
                 }
                 .addOnFailureListener {
-                    Toast.makeText(activity, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
+                    showErrorMessage(it)
                 }
     }
 
 
     private fun setupSaveButton() {
-        save_ts_button.setOnClickListener {
+        add_ts_save_button.setOnClickListener {
 
             //check if name is blank
             if (add_ts_name_value.text.isNullOrBlank()) {
-                Toast.makeText(activity, "Please enter name of time series", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, getString(R.string.add_ts_input_name_help), Toast.LENGTH_SHORT).show()
                 add_ts_name_value.requestFocus()
                 return@setOnClickListener
             }
 
             val dataPoints = HashMap<String, List<Double>>()
-            for (i in 0 until add_ts_points_layout.childCount) {
-                val secLayout = add_ts_points_layout.getChildAt(i) as LinearLayout
-                val dataValueView = secLayout.getChildAt(0) as EditText
-                val timeValueView = secLayout.getChildAt(1) as EditText
+            for (i in 0 until add_ts_add_points_layout.childCount) {
+                val secLayout = add_ts_add_points_layout.getChildAt(i) as LinearLayout
+                val xValueView = secLayout.getChildAt(0) as EditText
+                val yValueView = secLayout.getChildAt(1) as EditText
 
                 //check if they are blank
-                if (dataValueView.text.isNullOrBlank()) {
-                    Toast.makeText(activity, "Please enter data value of time series", Toast.LENGTH_SHORT).show()
-                    dataValueView.requestFocus()
+                if (xValueView.text.isNullOrBlank()) {
+                    Toast.makeText(activity, getString(R.string.add_ts_input_x_help_text), Toast.LENGTH_SHORT).show()
+                    xValueView.requestFocus()
                     return@setOnClickListener
                 }
-                if (timeValueView.text.isNullOrBlank()) {
-                    Toast.makeText(activity, "Please enter time value of time series", Toast.LENGTH_SHORT).show()
-                    timeValueView.requestFocus()
+                if (yValueView.text.isNullOrBlank()) {
+                    Toast.makeText(activity, getString(R.string.add_ts_input_y_help_text), Toast.LENGTH_SHORT).show()
+                    yValueView.requestFocus()
                     return@setOnClickListener
                 }
 
                 //check if input is number
                 val arr = ArrayList<Double>()
                 val pattern = "^-?\\d*\\.?\\d+\$"
-                val dataValue = dataValueView.text.toString()
-                if (Regex(pattern).matches(dataValue)) {
-                    arr.add(dataValue.toDouble())
+                val xValue = xValueView.text.toString()
+                if (Regex(pattern).matches(xValue)) {
+                    arr.add(xValue.toDouble())
                 } else {
-                    Toast.makeText(activity, "Please enter valid input", Toast.LENGTH_SHORT).show()
-                    dataValueView.requestFocus()
+                    Toast.makeText(activity, getString(R.string.add_ts_incorrect_input_message), Toast.LENGTH_SHORT).show()
+                    xValueView.requestFocus()
                     return@setOnClickListener
                 }
-                val timeValue = timeValueView.text.toString()
-                if (Regex(pattern).matches(timeValue)) {
-                    arr.add(timeValue.toDouble())
+                val yValue = yValueView.text.toString()
+                if (Regex(pattern).matches(yValue)) {
+                    arr.add(yValue.toDouble())
                 } else {
-                    Toast.makeText(activity, "Please enter valid input", Toast.LENGTH_SHORT).show()
-                    timeValueView.requestFocus()
+                    Toast.makeText(activity, getString(R.string.add_ts_incorrect_input_message), Toast.LENGTH_SHORT).show()
+                    yValueView.requestFocus()
                     return@setOnClickListener
                 }
 
@@ -127,10 +127,10 @@ class AddTimeSeriesFragment: Fragment() {
             val ts = TimeSeries(add_ts_name_value.text.toString(),
                     SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(Calendar.getInstance().time),
                     dataPoints)
-            add_ts_data_description_value.text.toString().let {
+            add_ts_x_axis_description_value.text.toString().let {
                 ts.dataDescription = it
             }
-            add_ts_time_description_value.text.toString().let {
+            add_ts_y_axis_description_value.text.toString().let {
                 ts.timeDescription = it
             }
 
@@ -164,7 +164,7 @@ class AddTimeSeriesFragment: Fragment() {
     }
 
     private fun showErrorMessage(it: Exception) {
-        Toast.makeText(activity, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
+        Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
     }
 
     //adds value and time edittexts to layout in xml file
@@ -179,15 +179,15 @@ class AddTimeSeriesFragment: Fragment() {
         layoutParams.bottomMargin = 10
         newLayout.layoutParams = layoutParams
 
-        val value = EditText(activity)
-        val time = EditText(activity)
-        value.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
-        value.hint = "X value"
-        time.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
-        time.hint = "Y value"
+        val xValue = EditText(activity)
+        val yValue = EditText(activity)
+        xValue.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
+        xValue.hint = getString(R.string.add_ts_x_input_hint)
+        yValue.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
+        yValue.hint = getString(R.string.add_ts_y_input_hint)
         if (defaultValues != null) {
-            value.setText(defaultValues[0].toString())
-            time.setText(defaultValues[1].toString())
+            xValue.setText(defaultValues[0].toString())
+            yValue.setText(defaultValues[1].toString())
         }
 
         //deletes this layout
@@ -198,16 +198,16 @@ class AddTimeSeriesFragment: Fragment() {
         deleteButton.layoutParams = deleteButtonParams
         deleteButtonParams.leftMargin = 10
         deleteButtonParams.rightMargin = 10
-        deleteButton.text = "Delete"
+        deleteButton.text = getString(R.string.add_ts_delete_button_text)
         deleteButton.setBackgroundColor(Color.parseColor("#EF5350"))
         deleteButton.setPadding(10, 0, 10, 0)
         deleteButton.setOnClickListener {
-            add_ts_points_layout.removeView(newLayout)
+            add_ts_add_points_layout.removeView(newLayout)
         }
 
-        newLayout.addView(value)
-        newLayout.addView(time)
+        newLayout.addView(xValue)
+        newLayout.addView(yValue)
         newLayout.addView(deleteButton)
-        add_ts_points_layout.addView(newLayout)
+        add_ts_add_points_layout.addView(newLayout)
     }
 }

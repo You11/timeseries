@@ -46,7 +46,7 @@ class MainFragment: Fragment() {
             if (!it.isSuccessful) {
                 //show error and hide loading icon
 //                if (FirebaseAuth.getInstance().currentUser != null)
-                    Toast.makeText(activity, "Error:" + it.exception?.localizedMessage, Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.exception?.localizedMessage, Toast.LENGTH_SHORT).show()
                 main_screen_loading_icon.hide()
                 return@addOnCompleteListener
             }
@@ -74,14 +74,14 @@ class MainFragment: Fragment() {
                         db.collection("time_series").document(timeSeries[position].uid.toString())
                                 .delete()
                                 .addOnSuccessListener {
-                                    Toast.makeText(activity, "Time series deleted!", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(activity, getString(R.string.time_series_deleted_message), Toast.LENGTH_SHORT).show()
                                 }
                                 .addOnFailureListener {
-                                    Toast.makeText(activity, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
                                 }
-                        } else {
-                            Toast.makeText(activity, "Unexpected things happening in this application!", Toast.LENGTH_SHORT).show()
-                        }
+                    } else {
+                        Toast.makeText(activity, getString(R.string.error), Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             val itemTouchHelper = ItemTouchHelper(swipeHandler)
@@ -90,7 +90,7 @@ class MainFragment: Fragment() {
             main_screen_loading_icon.hide()
             time_series_rw.visibility = RecyclerView.VISIBLE
         }.addOnFailureListener {
-            Toast.makeText(activity, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
             main_screen_loading_icon.hide()
         }
     }

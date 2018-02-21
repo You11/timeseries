@@ -50,7 +50,7 @@ class ViewTimeSeriesFragment: Fragment() {
                     setupDeleteButton()
                 }
                 .addOnFailureListener {
-                    Toast.makeText(activity, "Failed to load data!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
                     view_screen_loading_icon.hide()
                 }
     }
@@ -75,22 +75,22 @@ class ViewTimeSeriesFragment: Fragment() {
         view_time_series_delete_button.visibility = View.VISIBLE
         view_time_series_delete_button.setOnClickListener {
             val alertDialog = AlertDialog.Builder(activity)
-            alertDialog.setTitle("Confirm")
-                    .setMessage("Do you want to delete this time series?")
-                    .setPositiveButton("Ok", { dialog, which ->
+            alertDialog.setTitle(getString(R.string.delete_ts_dialog_title))
+                    .setMessage(getString(R.string.delete_ts_dialog_message))
+                    .setPositiveButton(getString(R.string.delete_ts_dialog_positive_btn), { dialog, which ->
                         //deletes entry from firestore and exits
                         FirebaseFirestore.getInstance().collection("time_series")
                                 .document(arguments.getString("uid"))
                                 .delete()
                                 .addOnSuccessListener {
-                                    Toast.makeText(activity, "Deleted!", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(activity, getString(R.string.success_deletion_message), Toast.LENGTH_SHORT).show()
                                     fragmentManager.popBackStack()
                                 }
                                 .addOnFailureListener {
-                                    Toast.makeText(activity, "Error: " + it.localizedMessage, Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
                                 }
                     })
-                    .setNegativeButton("Cancel", { dialog, which ->
+                    .setNegativeButton(getString(R.string.delete_ts_dialog_negative_button), { dialog, which ->
                         dialog.dismiss()
                     })
             alertDialog.show()
