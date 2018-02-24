@@ -8,7 +8,7 @@
     <string name="add_ts_input_x_help_text">Please enter data value of time series</string>
     <string name="add_ts_input_y_help_text">Please enter time value of time series</string>
     <string name="add_ts_incorrect_input_message">Please enter valid input</string>
-    <string name="error_with_localized_message">Error:</string>
+    <string name="error_with_localized_message">Error: </string>
     <string name="add_ts_x_input_hint">X value</string>
     <string name="add_ts_y_input_hint">Y value</string>
     <string name="add_ts_delete_button_text">Delete</string>
@@ -45,8 +45,8 @@
     <string name="user_profile_name_hint">Your profile name</string>
     <string name="user_profile_save_button">Save</string>
     <string name="user_profile_email_hint">Your email</string>
-    <string name="view_ts_x_axis_description_text">X axis stands for:</string>
-    <string name="view_ts_y_axis_description_text">Y axis stands for:</string>
+    <string name="view_ts_x_axis_description_text">X axis stands for: </string>
+    <string name="view_ts_y_axis_description_text">Y axis stands for: </string>
     <string name="view_ts_edit_button">Edit</string>
     <string name="view_ts_delete_button">Delete</string>
     <string name="edit_button_text">Edit</string>

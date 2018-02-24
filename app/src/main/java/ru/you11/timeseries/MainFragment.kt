@@ -42,7 +42,7 @@ class MainFragment: Fragment() {
         //gets all time series from firestore
         val timeSeries = ArrayList<TimeSeries>()
         val db = FirebaseFirestore.getInstance()
-        val task = db.collection("time_series").orderBy("creationDate", Query.Direction.DESCENDING).get()
+        val task = db.collection("time_series").orderBy("creation_date", Query.Direction.DESCENDING).get()
         task.addOnCompleteListener {
             if (!it.isSuccessful) {
                 //show error and hide loading icon
@@ -53,7 +53,7 @@ class MainFragment: Fragment() {
 
             it.result.forEach {
                 val element = TimeSeries(it["name"].toString(),
-                        it["creationDate"].toString(),
+                        it["creation_date"].toString(),
                         null)
                 //we need that id for loading specific time series
                 element.uid = it.id

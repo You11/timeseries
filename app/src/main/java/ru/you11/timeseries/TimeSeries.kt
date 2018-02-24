@@ -8,9 +8,9 @@ import kotlin.collections.HashMap
  */
 class TimeSeries(var name: String,
                  val creationDate: String,
-                 var dataValues: HashMap<String, List<Double>>?) {
+                 val dataValues: HashMap<String, List<Double>>?,
+                 val xAxisDescription: String? = null,
+                 val yAxisDescription: String? = null) {
 
-    var dataDescription: String? = null
-    var timeDescription: String? = null
     var uid: String? = null
 }

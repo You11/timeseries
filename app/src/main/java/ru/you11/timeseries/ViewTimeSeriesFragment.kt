@@ -31,10 +31,10 @@ class ViewTimeSeriesFragment: Fragment() {
                 .addOnCompleteListener {
 
                     val timeSeries = TimeSeries(it.result["name"].toString(),
-                            it.result["creationDate"].toString(),
-                            it.result["dataValues"] as HashMap<String, List<Double>>)
-                    timeSeries.dataDescription = it.result["dataDescription"].toString()
-                    timeSeries.timeDescription = it.result["timeDescription"].toString()
+                            it.result["creation_date"].toString(),
+                            it.result["data_values"] as HashMap<String, List<Double>>,
+                            it.result["x_axis_description"].toString(),
+                            it.result["y_axis_description"].toString())
                     timeSeries.uid = arguments.getString("uid")
 
                     view_time_series_name.text = timeSeries.name
@@ -106,7 +106,7 @@ class ViewTimeSeriesFragment: Fragment() {
             entries.add(Entry(values[0].toString().toFloat(), values[1].toString().toFloat()))
         }
 
-        val dataSet = LineDataSet(entries, timeSeries.dataDescription)
+        val dataSet = LineDataSet(entries, timeSeries.xAxisDescription)
         //chart style
         dataSet.lineWidth = 1.5f
         dataSet.color = Color.BLUE
@@ -127,9 +127,9 @@ class ViewTimeSeriesFragment: Fragment() {
         view_time_series_chart.invalidate()
         view_time_series_chart.visibility = View.VISIBLE
         //add descriptions to axis
-        view_time_series_x_axis_description.append(timeSeries.dataDescription)
+        view_time_series_x_axis_description.append(timeSeries.xAxisDescription)
         view_time_series_x_axis_description.visibility = View.VISIBLE
-        view_time_series_y_axis_description.append(timeSeries.timeDescription)
+        view_time_series_y_axis_description.append(timeSeries.yAxisDescription)
         view_time_series_y_axis_description.visibility = View.VISIBLE
     }
 }

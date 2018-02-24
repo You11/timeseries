@@ -59,14 +59,14 @@ class AddTimeSeriesFragment: Fragment() {
         FirebaseFirestore.getInstance().collection("time_series").document(id).get()
                 .addOnCompleteListener {
                     val timeSeries = TimeSeries(it.result["name"].toString(),
-                            it.result["creationDate"].toString(),
-                            it.result["dataValues"] as HashMap<String, List<Double>>)
-                    timeSeries.dataDescription = it.result["dataDescription"].toString()
-                    timeSeries.timeDescription = it.result["timeDescription"].toString()
+                            it.result["creation_date"].toString(),
+                            it.result["data_values"] as HashMap<String, List<Double>>,
+                            it.result["x_axis_description"].toString(),
+                            it.result["y_axis_description"].toString())
 
                     add_ts_name_value.setText(timeSeries.name)
-                    add_ts_y_axis_description_value.setText(timeSeries.timeDescription)
-                    add_ts_x_axis_description_value.setText(timeSeries.dataDescription)
+                    add_ts_x_axis_description_value.setText(timeSeries.xAxisDescription)
+                    add_ts_y_axis_description_value.setText(timeSeries.yAxisDescription)
 
                     timeSeries.dataValues?.forEach {
                         addXYPointsToLayout(it.value)
@@ -87,22 +87,31 @@ class AddTimeSeriesFragment: Fragment() {
 
             val ts = TimeSeries(add_ts_name_value.text.toString(),
                     SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(Calendar.getInstance().time),
-                    dataPoints)
-            add_ts_x_axis_description_value.text.toString().let {
-                ts.dataDescription = it
-            }
-            add_ts_y_axis_description_value.text.toString().let {
-                ts.timeDescription = it
-            }
+                    dataPoints,
+                    add_ts_x_axis_description_value.text.toString(),
+                    add_ts_y_axis_description_value.text.toString())
 
             //TODO: hide keyboard
 
             //send data to firestore
             val db = FirebaseFirestore.getInstance()
 
+            val tsFirestore = HashMap<String, Any>()
+            tsFirestore["name"] = ts.name
+            tsFirestore["creation_date"] = ts.creationDate
+            ts.xAxisDescription?.let {
+                tsFirestore["x_axis_description"] = it
+            }
+            ts.yAxisDescription?.let {
+                tsFirestore["y_axis_description"] = it
+            }
+            ts.dataValues?.let {
+                tsFirestore["data_values"] = it
+            }
+
             if (isEdit()) {
                 db.collection("time_series").document(arguments.getString("editTSid"))
-                        .set(ts, SetOptions.merge())
+                        .set(tsFirestore, SetOptions.merge())
                         .addOnCompleteListener {
                             fragmentManager.popBackStack()
                         }
@@ -112,7 +121,7 @@ class AddTimeSeriesFragment: Fragment() {
                         }
             } else {
                 db.collection("time_series")
-                        .add(ts)
+                        .add(tsFirestore)
                         .addOnCompleteListener {
                             fragmentManager.popBackStack()
                         }
