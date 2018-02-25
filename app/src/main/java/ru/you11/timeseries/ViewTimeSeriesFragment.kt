@@ -32,7 +32,7 @@ class ViewTimeSeriesFragment: Fragment() {
 
                     val timeSeries = TimeSeries(it.result["name"].toString(),
                             it.result["creation_date"].toString(),
-                            it.result["data_values"] as HashMap<String, List<Double>>,
+                            it.result["data_values"] as HashMap<String, List<Float>>,
                             it.result["x_axis_description"].toString(),
                             it.result["y_axis_description"].toString())
                     timeSeries.uid = arguments.getString("uid")
@@ -78,7 +78,7 @@ class ViewTimeSeriesFragment: Fragment() {
             val alertDialog = AlertDialog.Builder(activity)
             alertDialog.setTitle(getString(R.string.delete_ts_dialog_title))
                     .setMessage(getString(R.string.delete_ts_dialog_message))
-                    .setPositiveButton(getString(R.string.delete_ts_dialog_positive_btn), { dialog, which ->
+                    .setPositiveButton(getString(R.string.delete_ts_dialog_positive_btn), { _, _ ->
                         //deletes entry from firestore and exits
                         FirebaseFirestore.getInstance().collection("time_series")
                                 .document(arguments.getString("uid"))

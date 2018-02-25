@@ -3,7 +3,7 @@ package ru.you11.timeseries
 import android.app.Fragment
 import android.graphics.Color
 import android.os.Bundle
-import android.text.InputType
+import android.text.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,7 +60,7 @@ class AddTimeSeriesFragment: Fragment() {
                 .addOnCompleteListener {
                     val timeSeries = TimeSeries(it.result["name"].toString(),
                             it.result["creation_date"].toString(),
-                            it.result["data_values"] as HashMap<String, List<Double>>,
+                            it.result["data_values"] as HashMap<String, List<Float>>,
                             it.result["x_axis_description"].toString(),
                             it.result["y_axis_description"].toString())
 
@@ -82,7 +82,7 @@ class AddTimeSeriesFragment: Fragment() {
         add_ts_save_button.setOnClickListener {
 
             //x, y points of time series
-            val dataPoints = HashMap<String, List<Double>>()
+            val dataPoints = HashMap<String, List<Float>>()
             if (!checkInputForValidation(dataPoints)) return@setOnClickListener
 
             val ts = TimeSeries(add_ts_name_value.text.toString(),
@@ -133,7 +133,7 @@ class AddTimeSeriesFragment: Fragment() {
         }
     }
 
-    private fun checkInputForValidation(dataPoints: HashMap<String, List<Double>>): Boolean {
+    private fun checkInputForValidation(dataPoints: HashMap<String, List<Float>>): Boolean {
         //check if name is blank
         if (add_ts_name_value.text.isNullOrBlank()) {
             Toast.makeText(activity, getString(R.string.add_ts_input_name_help), Toast.LENGTH_SHORT).show()
@@ -160,25 +160,26 @@ class AddTimeSeriesFragment: Fragment() {
             }
 
             //check if input is number
-            val arr = ArrayList<Double>()
-            val pattern = "^-?\\d*\\.?\\d+\$"
+            //TODO: maybe should redo this
+            val arr = ArrayList<Float>()
 
-            fun isNumber(valueView: EditText): Boolean {
+            fun checkEditTextInput(valueView: EditText): Boolean {
                 val value = valueView.text.toString()
-                if (Regex(pattern).matches(value)) {
-                    arr.add(value.toDouble())
+                val result = Validation().isNumber(value)
+                return if (result) {
+                    arr.add(value.toFloat())
+                    true
                 } else {
+                    //if it's not valid
                     Toast.makeText(activity, getString(R.string.add_ts_incorrect_input_message), Toast.LENGTH_SHORT).show()
                     valueView.requestFocus()
-                    return true
+                    false
                 }
-
-                return false
             }
 
-            if (isNumber(xValueView)) return false
+            if (!checkEditTextInput(xValueView)) return false
 
-            if (isNumber(yValueView)) return false
+            if (!checkEditTextInput(yValueView)) return false
 
             dataPoints[i.toString()] = arr
         }
@@ -193,7 +194,7 @@ class AddTimeSeriesFragment: Fragment() {
 
 
     //adds value and time edittexts to layout in xml file
-    private fun addXYPointsToLayout(defaultValues: List<Double>?) {
+    private fun addXYPointsToLayout(defaultValues: List<Float>?) {
 
         val newLayout = LinearLayout(activity)
 
@@ -210,12 +211,16 @@ class AddTimeSeriesFragment: Fragment() {
         //both axis values
         val xValue = EditText(activity)
         val yValue = EditText(activity)
+        //TODO: this regex is retarded
+        val filter = RegexInputFilter("^-?\\d{0,4}(\\.\\d{0,3})?\$")
 
         //edit text style
         xValue.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
         xValue.hint = getString(R.string.add_ts_x_input_hint)
+        xValue.filters = arrayOf(filter)
         yValue.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
         yValue.hint = getString(R.string.add_ts_y_input_hint)
+        yValue.filters = arrayOf(filter)
 
         if (defaultValues != null) {
             xValue.setText(defaultValues[0].toString())
@@ -245,5 +250,13 @@ class AddTimeSeriesFragment: Fragment() {
         newLayout.addView(yValue)
         newLayout.addView(deleteButton)
         add_ts_add_points_layout.addView(newLayout)
+    }
+
+    class RegexInputFilter(private val pattern: String): InputFilter {
+        override fun filter(source: CharSequence, start: Int, end: Int, dest: Spanned?, dstart: Int, dend: Int): CharSequence? {
+            return if (Regex(pattern).matches(source.toString() + dest.toString())) {
+                null
+            } else ""
+        }
     }
 }
