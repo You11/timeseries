@@ -39,7 +39,7 @@ class AddTimeSeriesInstrumentationText {
     }
 
     @Test fun pointsLayout_isDisplayed() {
-        onView(allOf(withParent(withId(R.id.add_ts_add_points_layout))))
+        onView(allOf(withParent(withId(R.id.add_ts_add_points_rw))))
                 .check(matches(isDisplayed()))
                 .perform(click())
     }

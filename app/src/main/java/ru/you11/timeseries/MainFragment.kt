@@ -76,10 +76,10 @@ class MainFragment: Fragment() {
                     }
                     val uid = timeSeries[position].uid ?: return
                     val adapter = time_series_rw.adapter as TimeSeriesRecyclerViewAdapter
-                    adapter.removeAt(position)
                     db.collection("time_series").document(uid)
                             .delete()
                             .addOnSuccessListener {
+                                adapter.removeAt(position)
                                 Toast.makeText(activity, getString(R.string.time_series_deleted_message), Toast.LENGTH_SHORT).show()
                             }
                             .addOnFailureListener {
@@ -99,7 +99,7 @@ class MainFragment: Fragment() {
     }
 
 
-    class TimeSeriesRecyclerViewAdapter(private val items: ArrayList<TimeSeries>,
+    private class TimeSeriesRecyclerViewAdapter(private val items: ArrayList<TimeSeries>,
                                         private val fragment: Fragment): RecyclerView.Adapter<TimeSeriesRecyclerViewAdapter.ViewHolder>() {
 
         class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
@@ -130,6 +130,7 @@ class MainFragment: Fragment() {
         override fun getItemCount(): Int = items.size
 
         fun removeAt(position: Int) {
+            if (position >= items.size) return
             items.removeAt(position)
             notifyItemRemoved(position)
         }

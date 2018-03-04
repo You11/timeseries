@@ -26,13 +26,12 @@
         android:layout_marginTop="20dp"
         android:text="@string/add_ts_data_points_text"/>
 
-    <LinearLayout
+    <android.support.v7.widget.RecyclerView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/add_ts_add_points_layout"
-        android:orientation="vertical" >
+        android:id="@+id/add_ts_add_points_rw" >
 
-    </LinearLayout>
+    </android.support.v7.widget.RecyclerView>
 
     <Button
         android:layout_width="wrap_content"

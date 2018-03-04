@@ -1,19 +1,20 @@
 package ru.you11.timeseries
 
 import android.app.Fragment
-import android.graphics.Color
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.text.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.android.synthetic.main.add_time_series_fragment.*
+import kotlinx.android.synthetic.main.add_time_series_points_layout.view.*
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
@@ -33,21 +34,76 @@ class AddTimeSeriesFragment: Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //loads pre-existing values if it is edit
-        if (isEdit()) {
-            fillExistingValues(arguments.getString("editTSid"))
-        } else {
-            //adds first set of points
-            addXYPointsToLayout(null)
-        }
+        add_ts_add_points_rw.layoutManager = LinearLayoutManager(activity)
+
+        val items = getExistingValues()
+        add_ts_add_points_rw.adapter = AddTimeSeriesRecyclerViewAdapter(items)
 
         //"Add More" button
         add_ts_add_more_button.setOnClickListener {
-            addXYPointsToLayout(null)
+            addItem(items)
         }
 
         //Save and exit
         setupSaveButton()
+    }
+
+    private fun addItem(items: ArrayList<List<Float>?>) {
+        items.add(null)
+        add_ts_add_points_rw.adapter.notifyDataSetChanged()
+    }
+
+    private fun getExistingValues(): ArrayList<List<Float>?> {
+        val defaultItems = ArrayList<List<Float>?>()
+
+        if (isEdit()) {
+            fillExistingValues(arguments.getString("editTSid"), defaultItems)
+        } else {
+            defaultItems.add(null)
+        }
+
+        return defaultItems
+    }
+
+
+    private class AddTimeSeriesRecyclerViewAdapter(private val items: ArrayList<List<Float>?>):
+            RecyclerView.Adapter<AddTimeSeriesFragment.AddTimeSeriesRecyclerViewAdapter.ViewHolder>() {
+
+        class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+            fun bind(values: List<Float>) {
+                itemView.add_ts_x_value.setText(values[0].toString())
+                itemView.add_ts_y_value.setText(values[1].toString())
+            }
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+            return ViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.add_time_series_points_layout, parent, false))
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+            val currentItem = items[position]
+            if (currentItem != null)
+                holder?.bind(currentItem)
+
+            val filter = RegexInputFilter("^-?\\d{0,4}(\\.\\d{0,3})?\$")
+            holder?.itemView?.add_ts_x_value?.filters = arrayOf(filter)
+            holder?.itemView?.add_ts_y_value?.filters = arrayOf(filter)
+
+            holder?.itemView?.add_ts_button_delete?.setOnClickListener {
+                removeAt(position)
+            }
+        }
+
+        override fun getItemCount(): Int {
+            return items.size
+        }
+
+        private fun removeAt(position: Int) {
+            if (position < items.size)
+                items.removeAt(position)
+            notifyDataSetChanged()
+            //TODO: notifyItemRemoved not working correctly here
+        }
     }
 
 
@@ -55,7 +111,7 @@ class AddTimeSeriesFragment: Fragment() {
 
 
     //fills fields with values from firestore
-    private fun fillExistingValues(id: String) {
+    private fun fillExistingValues(id: String, items: ArrayList<List<Float>?>) {
         FirebaseFirestore.getInstance().collection("time_series").document(id).get()
                 .addOnCompleteListener {
                     val timeSeries = TimeSeries(it.result["name"].toString(),
@@ -68,9 +124,13 @@ class AddTimeSeriesFragment: Fragment() {
                     add_ts_x_axis_description_value.setText(timeSeries.xAxisDescription)
                     add_ts_y_axis_description_value.setText(timeSeries.yAxisDescription)
 
+                    //adds later data values to array in onViewCreated
                     timeSeries.dataValues?.forEach {
-                        addXYPointsToLayout(it.value)
+                        items.add(it.value)
                     }
+
+                    if (add_ts_add_points_rw.adapter != null)
+                        add_ts_add_points_rw.adapter.notifyDataSetChanged()
                 }
                 .addOnFailureListener {
                     showErrorMessage(it)
@@ -141,8 +201,8 @@ class AddTimeSeriesFragment: Fragment() {
             return false
         }
 
-        for (i in 0 until add_ts_add_points_layout.childCount) {
-            val secLayout = add_ts_add_points_layout.getChildAt(i) as LinearLayout
+        for (i in 0 until add_ts_add_points_rw.childCount) {
+            val secLayout = add_ts_add_points_rw.getChildAt(i) as LinearLayout
             val xValueView = secLayout.getChildAt(0) as EditText
             val yValueView = secLayout.getChildAt(1) as EditText
 
@@ -190,66 +250,6 @@ class AddTimeSeriesFragment: Fragment() {
 
     private fun showErrorMessage(it: Exception) {
         Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
-    }
-
-
-    //adds value and time edittexts to layout in xml file
-    private fun addXYPointsToLayout(defaultValues: List<Float>?) {
-
-        val newLayout = LinearLayout(activity)
-
-        //main layout style
-        newLayout.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-        newLayout.orientation = LinearLayout.HORIZONTAL
-        val layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT)
-        layoutParams.topMargin = 10
-        layoutParams.bottomMargin = 10
-        newLayout.layoutParams = layoutParams
-
-        //both axis values
-        val xValue = EditText(activity)
-        val yValue = EditText(activity)
-        //TODO: this regex is retarded
-        val filter = RegexInputFilter("^-?\\d{0,4}(\\.\\d{0,3})?\$")
-
-        //edit text style
-        xValue.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
-        xValue.hint = getString(R.string.add_ts_x_input_hint)
-        xValue.filters = arrayOf(filter)
-        yValue.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
-        yValue.hint = getString(R.string.add_ts_y_input_hint)
-        yValue.filters = arrayOf(filter)
-
-        if (defaultValues != null) {
-            xValue.setText(defaultValues[0].toString())
-            yValue.setText(defaultValues[1].toString())
-        }
-
-        //deletes this layout
-        val deleteButton = Button(activity)
-
-        //delete button style
-        val deleteButtonParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT)
-        deleteButton.layoutParams = deleteButtonParams
-        deleteButtonParams.leftMargin = 10
-        deleteButtonParams.rightMargin = 10
-        deleteButton.text = getString(R.string.add_ts_delete_button_text)
-        deleteButton.setBackgroundColor(Color.parseColor("#EF5350"))
-        deleteButton.setPadding(10, 0, 10, 0)
-
-        deleteButton.setOnClickListener {
-            add_ts_add_points_layout.removeView(newLayout)
-        }
-
-        //add all of them to parent
-        newLayout.addView(xValue)
-        newLayout.addView(yValue)
-        newLayout.addView(deleteButton)
-        add_ts_add_points_layout.addView(newLayout)
     }
 
     class RegexInputFilter(private val pattern: String): InputFilter {
