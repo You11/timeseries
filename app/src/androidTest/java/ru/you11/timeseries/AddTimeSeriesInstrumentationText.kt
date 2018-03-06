@@ -7,7 +7,8 @@ import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.filters.MediumTest
 import android.support.test.rule.ActivityTestRule
-import org.hamcrest.Matchers.allOf
+import android.widget.EditText
+import org.hamcrest.Matchers.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -38,14 +39,34 @@ class AddTimeSeriesInstrumentationText {
         onView(withId(R.id.add_ts_y_axis_description_value)).check(matches(isDisplayed()))
     }
 
-    @Test fun pointsLayout_isDisplayed() {
-        onView(allOf(withParent(withId(R.id.add_ts_add_points_rw))))
+    @Test fun xEditText_isDisplayed() {
+        onView(withId(R.id.add_ts_x_value))
+                .check(matches(isDisplayed()))
+                .perform(click())
+    }
+
+    @Test fun yEditText_isDisplayed() {
+        onView(withId(R.id.add_ts_y_value))
                 .check(matches(isDisplayed()))
                 .perform(click())
     }
 
     @Test fun deleteButton_isDisplayed() {
+        onView(allOf(withId(R.id.add_ts_button_delete)))
+                .check(matches(isDisplayed()))
+                .perform(click())
+    }
 
+    @Test fun addButton_isDisplayed() {
+        onView(withId(R.id.add_ts_add_more_button))
+                .check(matches(isDisplayed()))
+                .perform(click())
+    }
+
+    @Test fun saveButton_isDisplayed() {
+        onView(withId(R.id.add_ts_save_button))
+                .check(matches(isDisplayed()))
+                .perform(click())
     }
 
     @Test fun validateNameEditText() {
@@ -65,5 +86,4 @@ class AddTimeSeriesInstrumentationText {
                 .perform(click())
                 .check(matches(withText("Hello")))
     }
-
 }
