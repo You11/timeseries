@@ -1,13 +1,11 @@
 package ru.you11.timeseries
 
-import android.support.test.filters.SmallTest
 import org.junit.Assert.*
 import org.junit.Test
 
 /**
  * Created by you11 on 24.02.2018.
  */
-@SmallTest
 class ValidationUnitTest {
 
     @Test

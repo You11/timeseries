@@ -7,7 +7,6 @@ import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.filters.MediumTest
 import android.support.test.rule.ActivityTestRule
-import android.widget.EditText
 import org.hamcrest.Matchers.*
 import org.junit.Before
 import org.junit.Rule
@@ -52,7 +51,7 @@ class AddTimeSeriesInstrumentationText {
     }
 
     @Test fun deleteButton_isDisplayed() {
-        onView(allOf(withId(R.id.add_ts_button_delete)))
+        onView(allOf(withId(R.id.add_ts_delete_row_button)))
                 .check(matches(isDisplayed()))
                 .perform(click())
     }
@@ -75,6 +74,18 @@ class AddTimeSeriesInstrumentationText {
                 .check(matches(withText("Hello")))
     }
 
+    @Test fun validateXValueEditText() {
+        onView(withId(R.id.add_ts_x_value)).perform(typeText("356.654"))
+                .perform(click())
+                .check(matches(withText("356.654")))
+    }
+
+    @Test fun validateYValueEditText() {
+        onView(withId(R.id.add_ts_y_value)).perform(typeText("356.654"))
+                .perform(click())
+                .check(matches(withText("356.654")))
+    }
+
     @Test fun validateXDescriptionEditText() {
         onView(withId(R.id.add_ts_x_axis_description_value)).perform(typeText("Hello"))
                 .perform(click())
@@ -85,5 +96,19 @@ class AddTimeSeriesInstrumentationText {
         onView(withId(R.id.add_ts_y_axis_description_value)).perform(typeText("Hello"))
                 .perform(click())
                 .check(matches(withText("Hello")))
+    }
+
+    @Test fun addMoreButtonCreatesNewRow() {
+        onView(withId(R.id.add_ts_add_more_button)).perform(click())
+
+        onView(withId(R.id.add_ts_add_points_rw)).check(matches(hasChildCount(2)))
+
+        onView(allOf(withParent(withId(R.id.add_ts_add_points_rw)), withParentIndex(1))).check(matches(isDisplayed()))
+    }
+
+    @Test fun deleteButtonDeletesRow() {
+        onView(withId(R.id.add_ts_delete_row_button)).perform(click())
+
+        onView(withId(R.id.add_ts_add_points_rw)).check(matches(hasChildCount(0)))
     }
 }

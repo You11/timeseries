@@ -31,6 +31,7 @@ class AddTimeSeriesFragment: Fragment() {
         return inflater?.inflate(R.layout.add_time_series_fragment, container, false)
     }
 
+
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -48,10 +49,12 @@ class AddTimeSeriesFragment: Fragment() {
         setupSaveButton()
     }
 
+
     private fun addItem(items: ArrayList<List<Float>?>) {
         items.add(null)
         add_ts_add_points_rw.adapter.notifyDataSetChanged()
     }
+
 
     private fun getExistingValues(): ArrayList<List<Float>?> {
         val defaultItems = ArrayList<List<Float>?>()
@@ -89,7 +92,7 @@ class AddTimeSeriesFragment: Fragment() {
             holder?.itemView?.add_ts_x_value?.filters = arrayOf(filter)
             holder?.itemView?.add_ts_y_value?.filters = arrayOf(filter)
 
-            holder?.itemView?.add_ts_button_delete?.setOnClickListener {
+            holder?.itemView?.add_ts_delete_row_button?.setOnClickListener {
                 removeAt(position)
             }
         }

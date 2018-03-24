@@ -24,7 +24,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/add_ts_button_delete"
+        android:id="@+id/add_ts_delete_row_button"
         android:text="@string/add_ts_delete_button_text"
         android:background="#EF5350"
         android:layout_marginLeft="10dp"
