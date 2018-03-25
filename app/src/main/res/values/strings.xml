@@ -45,8 +45,8 @@
     <string name="user_profile_name_hint">Your profile name</string>
     <string name="user_profile_save_button">Save</string>
     <string name="user_profile_email_hint">Your email</string>
-    <string name="view_ts_x_axis_description_text">X axis stands for: </string>
-    <string name="view_ts_y_axis_description_text">Y axis stands for: </string>
+    <string name="view_ts_x_axis_description_text">X axis stands for:\u0020</string>
+    <string name="view_ts_y_axis_description_text">Y axis stands for:\u0020</string>
     <string name="view_ts_edit_button">Edit</string>
     <string name="view_ts_delete_button">Delete</string>
     <string name="edit_button_text">Edit</string>

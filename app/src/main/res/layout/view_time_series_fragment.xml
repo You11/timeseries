@@ -35,13 +35,19 @@
         android:id="@+id/view_screen_loading_icon"
         app:indicatorColor="#1976D2"
         app:indicatorName="BallSpinFadeLoaderIndicator" />
-
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/view_time_series_chart"
+    
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:layout_marginTop="20dp"
-        android:visibility="gone"/>
+        android:layout_height="wrap_content">
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/view_time_series_chart"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="20dp"
+            android:visibility="gone"
+            app:layout_constraintDimensionRatio="1:1"/>
+    </android.support.constraint.ConstraintLayout>
 
     <TextView
         android:layout_width="match_parent"
