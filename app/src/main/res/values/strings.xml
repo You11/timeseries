@@ -41,6 +41,7 @@
     <string name="add_ts_y_axis_desc_text">Enter Y axis description:</string>
     <string name="add_ts_y_axis_desc_input_hint">optional</string>
     <string name="add_ts_save_button">Save</string>
+    <string name="add_ts_save_button_needs_more_points_error_text">Graph needs at least one point</string>
     <string name="user_profile_picture_description">Avatar</string>
     <string name="user_profile_name_hint">Your profile name</string>
     <string name="user_profile_save_button">Save</string>

@@ -145,6 +145,12 @@ class AddTimeSeriesFragment: Fragment() {
     private fun setupSaveButton() {
         add_ts_save_button.setOnClickListener {
 
+            //check if points layout exist
+            if (add_ts_add_points_rw.adapter.itemCount == 0) {
+                Toast.makeText(activity, getString(R.string.add_ts_save_button_needs_more_points_error_text), Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             //x, y points of time series
             val dataPoints = HashMap<String, List<Float>>()
             if (!checkInputForValidation(dataPoints)) return@setOnClickListener
