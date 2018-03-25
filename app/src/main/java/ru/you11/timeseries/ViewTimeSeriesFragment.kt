@@ -12,8 +12,10 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.utils.EntryXComparator
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.view_time_series_fragment.*
+import java.util.*
 
 /**
  * Created by you11 on 18.01.2018.
@@ -105,6 +107,8 @@ class ViewTimeSeriesFragment: Fragment() {
             val values = it.value as List<*>
             entries.add(Entry(values[0].toString().toFloat(), values[1].toString().toFloat()))
         }
+        //sorts entries by x value
+        Collections.sort(entries, EntryXComparator())
 
         val dataSet = LineDataSet(entries, timeSeries.xAxisDescription)
         //chart style
