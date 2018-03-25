@@ -20,6 +20,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
 
+
+
 /**
  * Screen for adding new time series. Name and points are required, descriptions are not.
  * Data are sent to firestore. Also this fragments servers for editing existing time series from
@@ -52,7 +54,7 @@ class AddTimeSeriesFragment: Fragment() {
 
     private fun addItem(items: ArrayList<List<Float>?>) {
         items.add(null)
-        add_ts_add_points_rw.adapter.notifyDataSetChanged()
+        add_ts_add_points_rw.adapter.notifyItemInserted(items.size - 1)
     }
 
 
@@ -88,12 +90,13 @@ class AddTimeSeriesFragment: Fragment() {
             if (currentItem != null)
                 holder?.bind(currentItem)
 
+            //todo: fix pattern
             val filter = RegexInputFilter("^-?\\d{0,4}(\\.\\d{0,3})?\$")
             holder?.itemView?.add_ts_x_value?.filters = arrayOf(filter)
             holder?.itemView?.add_ts_y_value?.filters = arrayOf(filter)
 
             holder?.itemView?.add_ts_delete_row_button?.setOnClickListener {
-                removeAt(position)
+                removeAt(holder.adapterPosition)
             }
         }
 
@@ -102,10 +105,8 @@ class AddTimeSeriesFragment: Fragment() {
         }
 
         private fun removeAt(position: Int) {
-            if (position < items.size)
-                items.removeAt(position)
-            notifyDataSetChanged()
-            //TODO: notifyItemRemoved not working correctly here
+            items.removeAt(position)
+            notifyItemRemoved(position)
         }
     }
 
