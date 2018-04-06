@@ -22,8 +22,6 @@ import android.widget.*
 import android.widget.FrameLayout
 
 
-
-
 /**
  * Here shows user information. It is possible to change it through edit button in menu.
  */

@@ -3,5 +3,5 @@
 
     <item
         android:id="@+id/menu_user_profile_edit"
-        android:title="@string/edit_button_text" />
+        android:title="@string/user_profile_edit_button_text" />
 </menu>

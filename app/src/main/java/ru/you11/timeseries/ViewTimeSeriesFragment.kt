@@ -130,10 +130,20 @@ class ViewTimeSeriesFragment: Fragment() {
         view_time_series_chart.legend.isEnabled = false
         view_time_series_chart.invalidate()
         view_time_series_chart.visibility = View.VISIBLE
+
         //add descriptions to axis
-        view_time_series_x_axis_description.append(timeSeries.xAxisDescription)
+        if (!timeSeries.xAxisDescription.isNullOrBlank()) {
+            view_time_series_x_axis_description.append(timeSeries.xAxisDescription)
+        } else {
+            view_time_series_x_axis_description.text = resources.getText(R.string.view_ts_x_axis_description_text_none)
+        }
         view_time_series_x_axis_description.visibility = View.VISIBLE
-        view_time_series_y_axis_description.append(timeSeries.yAxisDescription)
+
+        if (!timeSeries.yAxisDescription.isNullOrBlank()) {
+            view_time_series_y_axis_description.append(timeSeries.yAxisDescription)
+        } else {
+            view_time_series_y_axis_description.text = resources.getText(R.string.view_ts_y_axis_description_text_none)
+        }
         view_time_series_y_axis_description.visibility = View.VISIBLE
     }
 }
