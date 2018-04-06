@@ -18,6 +18,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import com.google.firebase.auth.*
+import android.content.Context.INPUT_METHOD_SERVICE
+import android.view.inputmethod.InputMethodManager
 
 
 /**
@@ -79,8 +81,9 @@ class UserProfileFragment: Fragment() {
 
                 user_profile_save_button.setOnClickListener {
 
+                    hideSoftKeyboard()
                     val nameInput = user_profile_edit_name.text.toString()
-                    if (nameInput != user.displayName) {
+                    if (nameInput != user.displayName && nameInput.isNotBlank()) {
                         changeUsername(nameInput, user)
                     }
 
@@ -102,16 +105,23 @@ class UserProfileFragment: Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun hideSoftKeyboard() {
+        val imm = activity.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
     private fun changeUsername(nameInput: String, user: FirebaseUser) {
         val profileChangeRequest = UserProfileChangeRequest.Builder()
                 .setDisplayName(nameInput).build()
 
         user.updateProfile(profileChangeRequest)
                 .addOnSuccessListener {
+                    if (isFragmentClosed()) return@addOnSuccessListener
                     Toast.makeText(activity, getString(R.string.username_changed_message), Toast.LENGTH_SHORT).show()
                     user_profile_name.text = nameInput
                 }
                 .addOnFailureListener {
+                    if (isFragmentClosed()) return@addOnFailureListener
                     Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
                 }
     }
@@ -124,12 +134,16 @@ class UserProfileFragment: Fragment() {
 
                     user.updateEmail(emailInput)
                             .addOnCompleteListener {
+                                if (isFragmentClosed()) return@addOnCompleteListener
+
                                 if (it.isSuccessful) {
                                     Toast.makeText(activity, getString(R.string.email_changed_message), Toast.LENGTH_SHORT).show()
                                     user_profile_email.text = emailInput
                                 }
                             }
                             .addOnFailureListener {
+                                if (isFragmentClosed()) return@addOnFailureListener
+
                                 if (it is FirebaseAuthRecentLoginRequiredException) {
                                     requestPassword(user, emailInput)
                                 } else
@@ -157,9 +171,13 @@ class UserProfileFragment: Fragment() {
                 .setPositiveButton(getString(R.string.ask_password_dialog_positive_btn), { dialog, which ->
                     val credential = EmailAuthProvider.getCredential(user.email!!, passwordInputView.text.toString())
                     user.reauthenticate(credential).addOnCompleteListener {
+                        if (isFragmentClosed()) return@addOnCompleteListener
+
                         changeEmail(user, emailInput)
                     }
                     .addOnFailureListener {
+                        if (isFragmentClosed()) return@addOnFailureListener
+
                         Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
                     }
                 })
@@ -172,11 +190,17 @@ class UserProfileFragment: Fragment() {
     private fun changeEmail(user: FirebaseUser, emailInput: String) {
         user.updateEmail(emailInput)
                 .addOnCompleteListener {
+                    if (isFragmentClosed()) return@addOnCompleteListener
+
                     Toast.makeText(activity, getString(R.string.email_changed_message), Toast.LENGTH_SHORT).show()
                     user_profile_email.text = emailInput
                 }
                 .addOnFailureListener {
+                    if (isFragmentClosed()) return@addOnFailureListener
+
                     Toast.makeText(activity, getString(R.string.error_with_localized_message), Toast.LENGTH_SHORT).show()
                 }
     }
+
+    private fun isFragmentClosed() = !this.isResumed
 }

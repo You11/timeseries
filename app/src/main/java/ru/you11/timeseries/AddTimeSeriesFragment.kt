@@ -113,11 +113,15 @@ class AddTimeSeriesFragment: Fragment() {
 
     private fun isEdit() = arguments != null && arguments.getString("editTSid") != null
 
+    private fun isFragmentClosed() = !this.isResumed
 
     //fills fields with values from firestore
     private fun fillExistingValues(id: String, items: ArrayList<List<Float>?>) {
         FirebaseFirestore.getInstance().collection("time_series").document(id).get()
                 .addOnCompleteListener {
+                    //if exited before completion
+                    if (isFragmentClosed()) return@addOnCompleteListener
+
                     val timeSeries = TimeSeries(it.result["name"].toString(),
                             it.result["creation_date"].toString(),
                             it.result["data_values"] as HashMap<String, List<Float>>,
@@ -137,6 +141,7 @@ class AddTimeSeriesFragment: Fragment() {
                         add_ts_add_points_rw.adapter.notifyDataSetChanged()
                 }
                 .addOnFailureListener {
+                    if (isFragmentClosed()) return@addOnFailureListener
                     showErrorMessage(it)
                 }
     }
@@ -183,9 +188,11 @@ class AddTimeSeriesFragment: Fragment() {
                 db.collection("time_series").document(arguments.getString("editTSid"))
                         .set(tsFirestore, SetOptions.merge())
                         .addOnCompleteListener {
+                            if (isFragmentClosed()) return@addOnCompleteListener
                             fragmentManager.popBackStack()
                         }
                         .addOnFailureListener {
+                            if (isFragmentClosed()) return@addOnFailureListener
                             showErrorMessage(it)
                             fragmentManager.popBackStack()
                         }
@@ -193,9 +200,11 @@ class AddTimeSeriesFragment: Fragment() {
                 db.collection("time_series")
                         .add(tsFirestore)
                         .addOnCompleteListener {
+                            if (isFragmentClosed()) return@addOnCompleteListener
                             fragmentManager.popBackStack()
                         }
                         .addOnFailureListener {
+                            if (isFragmentClosed()) return@addOnFailureListener
                             showErrorMessage(it)
                             fragmentManager.popBackStack()
                         }

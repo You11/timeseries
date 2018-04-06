@@ -44,7 +44,7 @@ class MainFragment: Fragment() {
         val db = FirebaseFirestore.getInstance()
         val task = db.collection("time_series").orderBy("creation_date", Query.Direction.DESCENDING).get()
         task.addOnCompleteListener {
-            if (time_series_rw == null) return@addOnCompleteListener
+            if (isFragmentClosed()) return@addOnCompleteListener
 
             if (!it.isSuccessful) {
                 //show error and hide loading icon
@@ -93,10 +93,13 @@ class MainFragment: Fragment() {
             main_screen_loading_icon.hide()
             time_series_rw.visibility = RecyclerView.VISIBLE
         }.addOnFailureListener {
+            if (isFragmentClosed()) return@addOnFailureListener
             Toast.makeText(activity, getString(R.string.error_with_localized_message) + it.localizedMessage, Toast.LENGTH_SHORT).show()
             main_screen_loading_icon.hide()
         }
     }
+
+    private fun isFragmentClosed() = !this.isResumed
 
 
     private class TimeSeriesRecyclerViewAdapter(private val items: ArrayList<TimeSeries>,
