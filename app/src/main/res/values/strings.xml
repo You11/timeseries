@@ -24,7 +24,7 @@
     <string name="email_change_dialog_negative_btn">No</string>
     <string name="email_changed_message">Email changed!</string>
     <string name="ask_password_dialog_title">Password</string>
-    <string name="ask_password_dialog_message">Please input password for</string>
+    <string name="ask_password_dialog_message">Please input password for\u0020</string>
     <string name="ask_password_dialog_positive_btn">OK</string>
     <string name="ask_password_dialog_negative_btn">Cancel</string>
     <string name="delete_ts_dialog_title">Confirm</string>

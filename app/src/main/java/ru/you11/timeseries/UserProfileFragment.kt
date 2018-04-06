@@ -1,25 +1,27 @@
 package ru.you11.timeseries
 
+import android.annotation.SuppressLint
 import android.app.Fragment
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.user_profile_fragment.*
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.graphics.drawable.BitmapDrawable
-import android.support.v7.app.AlertDialog
 import android.text.InputType
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import com.google.firebase.auth.*
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.res.Resources
+import android.support.v7.app.AlertDialog
 import android.view.inputmethod.InputMethodManager
+import android.widget.*
+import android.widget.FrameLayout
+
+
 
 
 /**
@@ -160,14 +162,22 @@ class UserProfileFragment: Fragment() {
     private fun requestPassword(user: FirebaseUser, emailInput: String) {
         //setupPasswordInput
         val passwordInputView = EditText(activity)
+        val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        val margin = dpToPx(20)
+        params.leftMargin = margin
+        params.rightMargin = margin
+        passwordInputView.layoutParams = params
         passwordInputView.setPadding(20, 20, 20, 20)
+        passwordInputView.setSingleLine()
         passwordInputView.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        val passwordLayoutView = FrameLayout(activity)
+        passwordLayoutView.addView(passwordInputView)
 
         //creates dialog which asks for password
         val askPasswordDialog = AlertDialog.Builder(activity)
         askPasswordDialog.setTitle(getString(R.string.ask_password_dialog_title))
                 .setMessage(getString(R.string.ask_password_dialog_message) + user.email)
-                .setView(passwordInputView)
+                .setView(passwordLayoutView)
                 .setPositiveButton(getString(R.string.ask_password_dialog_positive_btn), { dialog, which ->
                     val credential = EmailAuthProvider.getCredential(user.email!!, passwordInputView.text.toString())
                     user.reauthenticate(credential).addOnCompleteListener {
@@ -185,6 +195,10 @@ class UserProfileFragment: Fragment() {
                     dialog.dismiss()
                 })
         askPasswordDialog.show()
+    }
+
+    private fun dpToPx(dp: Int): Int {
+        return (dp * Resources.getSystem().displayMetrics.density).toInt()
     }
 
     private fun changeEmail(user: FirebaseUser, emailInput: String) {
